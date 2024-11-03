@@ -60,9 +60,9 @@
 
 ```log
 $ hardhat run scripts/deploy.ts --network bscTestnet
-Compiled 1 Solidity file successfully (evm target: paris).
 Deploying contracts with the account: 0xaC05f1bC30D927D12D2166d62E8dAC8Da3E6A36b
-MultiContestVoting deployed to: 0xD8dC58160B5dB7eEe239365D2Df78373923682d8
+MultiContestVoting deployed to: 0x389f44Af18182305ff149c021dFEc713E2a4806f
+Contract: https://testnet.bscscan.com/address/0x389f44Af18182305ff149c021dFEc713E2a4806f
 ```
 
 ### Lưu ý
