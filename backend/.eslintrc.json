@@ -1,0 +1,62 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "tsconfigRootDir": "./",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint/eslint-plugin"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "root": true,
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "ignorePatterns": [".eslintrc.js"],
+  "rules": {
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-function": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "plugins": ["@typescript-eslint", "unused-imports", "simple-import-sort"],
+      "rules": {
+        "prettier/prettier": ["error", { "singleQuote": true, "endOfLine": "auto" }],
+        "react/destructuring-assignment": "off",
+        "@typescript-eslint/comma-dangle": "off",
+        "@typescript-eslint/consistent-type-imports": "error",
+        "import/prefer-default-export": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "no-underscore-dangle": "off",
+        "no-console": "off",
+        "new-cap": ["off", { "newIsCap": true }],
+        "no-plusplus": "off",
+        "@typescript-eslint/naming-convention": [
+          "warn",
+          {
+            "selector": "variable",
+            "types": ["boolean"],
+            "format": ["camelCase", "PascalCase", "UPPER_CASE", "snake_case"]
+          }
+        ],
+        "@typescript-eslint/no-use-before-define": "off",
+        "indent": "off",
+        "@typescript-eslint/indent": "off",
+        "import/no-cycle": "off",
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": ["off", { "argsIgnorePattern": "^_" }],
+        "no-restricted-exports": ["off", { "restrictedNamedExports": ["default"] }],
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error",
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ]
+}

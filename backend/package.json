@@ -1,0 +1,51 @@
+{
+  "name": "vote",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Vote API",
+  "license": "MIT",
+  "module": "src/main.ts",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "dev": "bun --watch src/main.ts",
+    "prod": "bun src/main.ts",
+    "cluster": "bun src/cluster.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix"
+  },
+  "dependencies": {
+    "@thanhhoajs/logger": "latest",
+    "@thanhhoajs/thanhhoa": "latest",
+    "@thanhhoajs/validator": "latest",
+    "axios": "^1.7.7",
+    "drizzle-orm": "^0.35.3",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.4",
+    "swagger-jsdoc": "^6.2.8",
+    "uuid": "^10.0.0",
+    "web3": "^4.15.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "drizzle-kit": "^0.26.2",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^3.2.0",
+    "prettier": "^2.8.8"
+  }
+}
