@@ -1,4 +1,5 @@
 import type { IRequestContext } from '@thanhhoajs/thanhhoa';
+import { customResponse } from 'src/utils/custom-response';
 
 import { ValidateUserSocialDto } from './dto/user-social.validate';
 import { ValidateUserWalletDto } from './dto/user-wallet.validate';
@@ -52,9 +53,7 @@ export class UserAuthController {
 
       const user = await this.walletService.getNonce(dto.walletAddress);
 
-      return new Response(JSON.stringify(user), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(user, 201);
     } catch (error) {
       throw error;
     }
@@ -125,9 +124,7 @@ export class UserAuthController {
 
       const user = await this.walletService.login(dto);
 
-      return new Response(JSON.stringify(user), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(user, 201);
     } catch (error) {
       throw error;
     }
@@ -195,9 +192,7 @@ export class UserAuthController {
 
       const result = await this.googleAuthService.login(dto);
 
-      return new Response(JSON.stringify(result), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(result, 201);
     } catch (error) {
       throw error;
     }
@@ -245,9 +240,7 @@ export class UserAuthController {
   async logout(context: IRequestContext): Promise<Response> {
     try {
       const isLogout = await this.userAuthService.logout(context);
-      return new Response(JSON.stringify({ isLogout }), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(isLogout);
     } catch (error) {
       throw error;
     }
@@ -313,9 +306,7 @@ export class UserAuthController {
   async refreshToken(context: IRequestContext): Promise<Response> {
     try {
       const user = await this.userAuthService.refreshToken(context);
-      return new Response(JSON.stringify(user), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(user);
     } catch (error) {
       throw error;
     }

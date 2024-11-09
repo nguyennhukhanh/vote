@@ -1,4 +1,5 @@
 import type { IRequestContext } from '@thanhhoajs/thanhhoa';
+import { customResponse } from 'src/utils/custom-response';
 
 export class AdminController {
   constructor() {}
@@ -74,8 +75,6 @@ export class AdminController {
    */
   async getProfile(context: IRequestContext): Promise<Response> {
     const admin = context.admin;
-    return new Response(JSON.stringify(admin), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return customResponse(admin);
   }
 }

@@ -1,4 +1,5 @@
 import type { IRequestContext } from '@thanhhoajs/thanhhoa';
+import { customResponse } from 'src/utils/custom-response';
 
 import type { AdminAuthService } from './admin-auth.service';
 import { CreateAdminDto } from './dto/admin.create';
@@ -89,9 +90,7 @@ export class AdminAuthController {
 
       const admin = await this.adminAuthService.register(context, dto);
 
-      return new Response(JSON.stringify(admin), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(admin, 201);
     } catch (error) {
       throw error;
     }
@@ -178,9 +177,7 @@ export class AdminAuthController {
 
       const admin = await this.adminAuthService.login(email, password);
 
-      return new Response(JSON.stringify(admin), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(admin, 201);
     } catch (error) {
       throw error;
     }
@@ -228,9 +225,7 @@ export class AdminAuthController {
   async logout(context: IRequestContext): Promise<Response> {
     try {
       const isLogout = await this.adminAuthService.logout(context);
-      return new Response(JSON.stringify({ isLogout }), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(isLogout);
     } catch (error) {
       throw error;
     }
@@ -296,9 +291,7 @@ export class AdminAuthController {
   async refreshToken(context: IRequestContext): Promise<Response> {
     try {
       const admin = await this.adminAuthService.refreshToken(context);
-      return new Response(JSON.stringify(admin), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return customResponse(admin);
     } catch (error) {
       throw error;
     }

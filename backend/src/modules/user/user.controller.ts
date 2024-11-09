@@ -1,4 +1,5 @@
 import type { IRequestContext } from '@thanhhoajs/thanhhoa';
+import { customResponse } from 'src/utils/custom-response';
 
 export class UserController {
   constructor() {}
@@ -71,8 +72,6 @@ export class UserController {
    */
   async getProfile(context: IRequestContext): Promise<Response> {
     const user = context.user;
-    return new Response(JSON.stringify(user), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return customResponse(user);
   }
 }
