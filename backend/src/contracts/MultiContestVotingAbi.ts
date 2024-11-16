@@ -13,7 +13,7 @@ import type {
   ContractRunner,
   ContractMethod,
   Listener,
-} from "ethers";
+} from 'ethers';
 import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
@@ -21,70 +21,70 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "./common";
+} from './common';
 
 export interface MultiContestVotingAbiInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "addCandidate"
-      | "createVote"
-      | "endVote"
-      | "getCandidate"
-      | "operator"
-      | "vote"
-      | "voteCount"
-      | "votes"
+      | 'addCandidate'
+      | 'createVote'
+      | 'endVote'
+      | 'getCandidate'
+      | 'operator'
+      | 'vote'
+      | 'voteCount'
+      | 'votes',
   ): FunctionFragment;
 
   getEvent(
-    nameOrSignatureOrTopic: "CandidateAdded" | "VoteCreated" | "Voted"
+    nameOrSignatureOrTopic: 'CandidateAdded' | 'VoteCreated' | 'Voted',
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "addCandidate",
-    values: [BigNumberish, string]
+    functionFragment: 'addCandidate',
+    values: [BigNumberish, string],
   ): string;
   encodeFunctionData(
-    functionFragment: "createVote",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: 'createVote',
+    values: [BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(
-    functionFragment: "endVote",
-    values: [BigNumberish]
+    functionFragment: 'endVote',
+    values: [BigNumberish],
   ): string;
   encodeFunctionData(
-    functionFragment: "getCandidate",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: 'getCandidate',
+    values: [BigNumberish, BigNumberish],
   ): string;
-  encodeFunctionData(functionFragment: "operator", values?: undefined): string;
+  encodeFunctionData(functionFragment: 'operator', values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "vote",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: 'vote',
+    values: [BigNumberish, BigNumberish],
   ): string;
-  encodeFunctionData(functionFragment: "voteCount", values?: undefined): string;
-  encodeFunctionData(functionFragment: "votes", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'voteCount', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'votes', values: [BigNumberish]): string;
 
   decodeFunctionResult(
-    functionFragment: "addCandidate",
-    data: BytesLike
+    functionFragment: 'addCandidate',
+    data: BytesLike,
   ): Result;
-  decodeFunctionResult(functionFragment: "createVote", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "endVote", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'createVote', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'endVote', data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getCandidate",
-    data: BytesLike
+    functionFragment: 'getCandidate',
+    data: BytesLike,
   ): Result;
-  decodeFunctionResult(functionFragment: "operator", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "vote", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "voteCount", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "votes", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'operator', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'vote', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'voteCount', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'votes', data: BytesLike): Result;
 }
 
 export namespace CandidateAddedEvent {
   export type InputTuple = [
     voteId: BigNumberish,
     candidateId: BigNumberish,
-    name: string
+    name: string,
   ];
   export type OutputTuple = [voteId: bigint, candidateId: bigint, name: string];
   export interface OutputObject {
@@ -102,12 +102,12 @@ export namespace VoteCreatedEvent {
   export type InputTuple = [
     voteId: BigNumberish,
     startTime: BigNumberish,
-    endTime: BigNumberish
+    endTime: BigNumberish,
   ];
   export type OutputTuple = [
     voteId: bigint,
     startTime: bigint,
-    endTime: bigint
+    endTime: bigint,
   ];
   export interface OutputObject {
     voteId: bigint;
@@ -124,12 +124,12 @@ export namespace VotedEvent {
   export type InputTuple = [
     voteId: BigNumberish,
     voter: AddressLike,
-    candidateId: BigNumberish
+    candidateId: BigNumberish,
   ];
   export type OutputTuple = [
     voteId: bigint,
     voter: string,
-    candidateId: bigint
+    candidateId: bigint,
   ];
   export interface OutputObject {
     voteId: bigint;
@@ -151,69 +151,69 @@ export interface MultiContestVotingAbi extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
+    event: TCEvent,
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
+    event?: TCEvent,
   ): Promise<this>;
 
   addCandidate: TypedContractMethod<
     [voteId: BigNumberish, _name: string],
     [void],
-    "nonpayable"
+    'nonpayable'
   >;
 
   createVote: TypedContractMethod<
     [_startTime: BigNumberish, _endTime: BigNumberish],
     [bigint],
-    "nonpayable"
+    'nonpayable'
   >;
 
-  endVote: TypedContractMethod<[voteId: BigNumberish], [void], "nonpayable">;
+  endVote: TypedContractMethod<[voteId: BigNumberish], [void], 'nonpayable'>;
 
   getCandidate: TypedContractMethod<
     [voteId: BigNumberish, _candidateId: BigNumberish],
     [[string, bigint] & { name: string; votesCount: bigint }],
-    "view"
+    'view'
   >;
 
-  operator: TypedContractMethod<[], [string], "view">;
+  operator: TypedContractMethod<[], [string], 'view'>;
 
   vote: TypedContractMethod<
     [voteId: BigNumberish, _candidateId: BigNumberish],
     [void],
-    "nonpayable"
+    'nonpayable'
   >;
 
-  voteCount: TypedContractMethod<[], [bigint], "view">;
+  voteCount: TypedContractMethod<[], [bigint], 'view'>;
 
   votes: TypedContractMethod<
     [arg0: BigNumberish],
@@ -223,55 +223,53 @@ export interface MultiContestVotingAbi extends BaseContract {
         endTime: bigint;
         candidateCount: bigint;
         ended: boolean;
-      }
+      },
     ],
-    "view"
+    'view'
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
+    key: string | FunctionFragment,
   ): T;
 
   getFunction(
-    nameOrSignature: "addCandidate"
+    nameOrSignature: 'addCandidate',
   ): TypedContractMethod<
     [voteId: BigNumberish, _name: string],
     [void],
-    "nonpayable"
+    'nonpayable'
   >;
   getFunction(
-    nameOrSignature: "createVote"
+    nameOrSignature: 'createVote',
   ): TypedContractMethod<
     [_startTime: BigNumberish, _endTime: BigNumberish],
     [bigint],
-    "nonpayable"
+    'nonpayable'
   >;
   getFunction(
-    nameOrSignature: "endVote"
-  ): TypedContractMethod<[voteId: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: 'endVote',
+  ): TypedContractMethod<[voteId: BigNumberish], [void], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "getCandidate"
+    nameOrSignature: 'getCandidate',
   ): TypedContractMethod<
     [voteId: BigNumberish, _candidateId: BigNumberish],
     [[string, bigint] & { name: string; votesCount: bigint }],
-    "view"
+    'view'
   >;
   getFunction(
-    nameOrSignature: "operator"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: 'operator',
+  ): TypedContractMethod<[], [string], 'view'>;
   getFunction(
-    nameOrSignature: "vote"
+    nameOrSignature: 'vote',
   ): TypedContractMethod<
     [voteId: BigNumberish, _candidateId: BigNumberish],
     [void],
-    "nonpayable"
+    'nonpayable'
   >;
   getFunction(
-    nameOrSignature: "voteCount"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "votes"
-  ): TypedContractMethod<
+    nameOrSignature: 'voteCount',
+  ): TypedContractMethod<[], [bigint], 'view'>;
+  getFunction(nameOrSignature: 'votes'): TypedContractMethod<
     [arg0: BigNumberish],
     [
       [bigint, bigint, bigint, boolean] & {
@@ -279,27 +277,27 @@ export interface MultiContestVotingAbi extends BaseContract {
         endTime: bigint;
         candidateCount: bigint;
         ended: boolean;
-      }
+      },
     ],
-    "view"
+    'view'
   >;
 
   getEvent(
-    key: "CandidateAdded"
+    key: 'CandidateAdded',
   ): TypedContractEvent<
     CandidateAddedEvent.InputTuple,
     CandidateAddedEvent.OutputTuple,
     CandidateAddedEvent.OutputObject
   >;
   getEvent(
-    key: "VoteCreated"
+    key: 'VoteCreated',
   ): TypedContractEvent<
     VoteCreatedEvent.InputTuple,
     VoteCreatedEvent.OutputTuple,
     VoteCreatedEvent.OutputObject
   >;
   getEvent(
-    key: "Voted"
+    key: 'Voted',
   ): TypedContractEvent<
     VotedEvent.InputTuple,
     VotedEvent.OutputTuple,
@@ -307,7 +305,7 @@ export interface MultiContestVotingAbi extends BaseContract {
   >;
 
   filters: {
-    "CandidateAdded(uint256,uint256,string)": TypedContractEvent<
+    'CandidateAdded(uint256,uint256,string)': TypedContractEvent<
       CandidateAddedEvent.InputTuple,
       CandidateAddedEvent.OutputTuple,
       CandidateAddedEvent.OutputObject
@@ -318,7 +316,7 @@ export interface MultiContestVotingAbi extends BaseContract {
       CandidateAddedEvent.OutputObject
     >;
 
-    "VoteCreated(uint256,uint256,uint256)": TypedContractEvent<
+    'VoteCreated(uint256,uint256,uint256)': TypedContractEvent<
       VoteCreatedEvent.InputTuple,
       VoteCreatedEvent.OutputTuple,
       VoteCreatedEvent.OutputObject
@@ -329,7 +327,7 @@ export interface MultiContestVotingAbi extends BaseContract {
       VoteCreatedEvent.OutputObject
     >;
 
-    "Voted(uint256,address,uint256)": TypedContractEvent<
+    'Voted(uint256,address,uint256)': TypedContractEvent<
       VotedEvent.InputTuple,
       VotedEvent.OutputTuple,
       VotedEvent.OutputObject

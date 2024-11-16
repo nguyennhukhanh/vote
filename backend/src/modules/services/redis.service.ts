@@ -20,8 +20,7 @@ export class RedisService {
       keepAlive: 1000,
     });
 
-    // TODO: Enable health check
-    // this.health();
+    this.health();
   }
 
   getClient(): Redis {

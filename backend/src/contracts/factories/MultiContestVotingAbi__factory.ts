@@ -2,254 +2,254 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Interface, type ContractRunner } from "ethers";
+import { Contract, Interface, type ContractRunner } from 'ethers';
 import type {
   MultiContestVotingAbi,
   MultiContestVotingAbiInterface,
-} from "../MultiContestVotingAbi";
+} from '../MultiContestVotingAbi';
 
 const _abi = [
   {
     inputs: [],
-    stateMutability: "nonpayable",
-    type: "constructor",
+    stateMutability: 'nonpayable',
+    type: 'constructor',
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "voteId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'voteId',
+        type: 'uint256',
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "candidateId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'candidateId',
+        type: 'uint256',
       },
       {
         indexed: false,
-        internalType: "string",
-        name: "name",
-        type: "string",
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
     ],
-    name: "CandidateAdded",
-    type: "event",
+    name: 'CandidateAdded',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "voteId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'voteId',
+        type: 'uint256',
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "startTime",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'startTime',
+        type: 'uint256',
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "endTime",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'endTime',
+        type: 'uint256',
       },
     ],
-    name: "VoteCreated",
-    type: "event",
+    name: 'VoteCreated',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "voteId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'voteId',
+        type: 'uint256',
       },
       {
         indexed: false,
-        internalType: "address",
-        name: "voter",
-        type: "address",
+        internalType: 'address',
+        name: 'voter',
+        type: 'address',
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "candidateId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'candidateId',
+        type: 'uint256',
       },
     ],
-    name: "Voted",
-    type: "event",
+    name: 'Voted',
+    type: 'event',
   },
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "voteId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'voteId',
+        type: 'uint256',
       },
       {
-        internalType: "string",
-        name: "_name",
-        type: "string",
+        internalType: 'string',
+        name: '_name',
+        type: 'string',
       },
     ],
-    name: "addCandidate",
+    name: 'addCandidate',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_startTime",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '_startTime',
+        type: 'uint256',
       },
       {
-        internalType: "uint256",
-        name: "_endTime",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '_endTime',
+        type: 'uint256',
       },
     ],
-    name: "createVote",
+    name: 'createVote',
     outputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "voteId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'voteId',
+        type: 'uint256',
       },
     ],
-    name: "endVote",
+    name: 'endVote',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "voteId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'voteId',
+        type: 'uint256',
       },
       {
-        internalType: "uint256",
-        name: "_candidateId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '_candidateId',
+        type: 'uint256',
       },
     ],
-    name: "getCandidate",
+    name: 'getCandidate',
     outputs: [
       {
-        internalType: "string",
-        name: "name",
-        type: "string",
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
       {
-        internalType: "uint256",
-        name: "votesCount",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'votesCount',
+        type: 'uint256',
       },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "operator",
+    name: 'operator',
     outputs: [
       {
-        internalType: "address",
-        name: "",
-        type: "address",
+        internalType: 'address',
+        name: '',
+        type: 'address',
       },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "voteId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'voteId',
+        type: 'uint256',
       },
       {
-        internalType: "uint256",
-        name: "_candidateId",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '_candidateId',
+        type: 'uint256',
       },
     ],
-    name: "vote",
+    name: 'vote',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "voteCount",
+    name: 'voteCount',
     outputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
-    name: "votes",
+    name: 'votes',
     outputs: [
       {
-        internalType: "uint256",
-        name: "startTime",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'startTime',
+        type: 'uint256',
       },
       {
-        internalType: "uint256",
-        name: "endTime",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'endTime',
+        type: 'uint256',
       },
       {
-        internalType: "uint256",
-        name: "candidateCount",
-        type: "uint256",
+        internalType: 'uint256',
+        name: 'candidateCount',
+        type: 'uint256',
       },
       {
-        internalType: "bool",
-        name: "ended",
-        type: "bool",
+        internalType: 'bool',
+        name: 'ended',
+        type: 'bool',
       },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
 ] as const;
 
@@ -260,12 +260,12 @@ export class MultiContestVotingAbi__factory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    runner?: ContractRunner | null,
   ): MultiContestVotingAbi {
     return new Contract(
       address,
       _abi,
-      runner
+      runner,
     ) as unknown as MultiContestVotingAbi;
   }
 }

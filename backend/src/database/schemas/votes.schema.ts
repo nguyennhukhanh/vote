@@ -29,4 +29,4 @@ export const votes = mysqlTable('votes', {
     .$default(() => new Date()),
 });
 
-export type Candidate = typeof votes.$inferSelect;
+export type Vote = typeof votes.$inferSelect;
