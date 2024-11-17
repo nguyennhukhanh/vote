@@ -15,7 +15,14 @@ export function customResponse<T>(data: T, status?: number): Response {
     data,
   };
 
-  return new Response(JSON.stringify(response), {
+  const bigIntReplacer = (_key: string, value: any) => {
+    if (typeof value === 'bigint') {
+      return value.toString();
+    }
+    return value;
+  };
+
+  return new Response(JSON.stringify(response, bigIntReplacer), {
     headers: { 'Content-Type': 'application/json' },
   });
 }
