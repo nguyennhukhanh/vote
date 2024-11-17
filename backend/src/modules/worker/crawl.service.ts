@@ -439,9 +439,13 @@ export class CrawlService {
     logger.info(`Handling Voted event: ${JSON.stringify(event)}`);
 
     const { blockNumber, transactionHash, address } = event;
-    const [voteId, candidateId, voter] = event.args;
+    const [voteId, voter, candidateId] = event.args;
 
     const transaction = await this._provider.getTransaction(transactionHash);
+    if (!transaction) {
+      logger.error(`Transaction not found for hash: ${transactionHash}`);
+      return;
+    }
 
     if (!transaction) {
       logger.error(`Transaction not found for hash: ${transactionHash}`);
