@@ -94,6 +94,7 @@ export class CrawlService {
   async listenPastEvents(): Promise<void> {
     this._latestBlock = await this.getLatestBlock();
     const key = `crawl:${this._symbolNetwork}_${this._contractAddress}`;
+
     const latestBlockRedis = await this.redisService.get(key);
     if (latestBlockRedis && Number(latestBlockRedis) > this._latestBlock) {
       this._latestBlock = Number(latestBlockRedis);
@@ -109,8 +110,9 @@ export class CrawlService {
 
       if (events.length > 0) {
         await this.handleEventsInBatches(events);
-        await this.updateLatestBlock(batchToBlock);
       }
+
+      await this.updateLatestBlock(batchToBlock);
 
       logger.debug(
         `[${this._symbolNetwork}] | Crawl: ${fromBlock} - ${batchToBlock}`,
@@ -127,13 +129,13 @@ export class CrawlService {
     let retryCount = 0;
     const MAX_RETRIES = 3;
     const BASE_DELAY = 10000; // 10 seconds
-    const MAX_DELAY = 60000; // 1 minute
+    const MAX_DELAY = 15000; // 15 seconds
 
     const poll = async () => {
       try {
         // Get latest block with confirmation depth
         const latestBlock = await this._provider.getBlockNumber();
-        const confirmedBlock = latestBlock - 12; // Wait 12 blocks for finality
+        const confirmedBlock = latestBlock - 3; // Wait 3 blocks for finality
 
         // Don't process if we're already up to date
         if (confirmedBlock <= this._latestBlock) {
@@ -146,7 +148,7 @@ export class CrawlService {
 
         // Fetch events with retries
         const events = await this.fetchEventsBatchWithRetry(
-          this._latestBlock,
+          this._latestBlock + 1, // Start from the next block
           confirmedBlock,
           MAX_RETRIES,
         );
@@ -156,15 +158,16 @@ export class CrawlService {
           retryCount = 0; // Reset retry count on success
         } else {
           logger.debug(
-            `[${this._symbolNetwork}] | No new events found: ${this._latestBlock} - ${confirmedBlock}`,
+            `[${this._symbolNetwork}] | No new events found: ${
+              this._latestBlock + 1
+            } - ${confirmedBlock}`,
           );
         }
 
         // Update latest block and cache
         this._latestBlock = confirmedBlock;
-        // TODO: Uncomment this when we have a working Redis instance
-        // const key = `crawl:${this._symbolNetwork}_${this._contractAddress}`;
-        // await this.redisService.set(key, this._latestBlock, 3600); // Cache for 1 hour
+        const key = `crawl:${this._symbolNetwork}_${this._contractAddress}`;
+        await this.redisService.set(key, this._latestBlock, 3600); // Cache for 1 hour
 
         scheduleNextPoll(BASE_DELAY);
       } catch (error) {
@@ -219,7 +222,7 @@ export class CrawlService {
         .execute();
 
       return (
-        Number(latestBlock?.blockNumber) ||
+        Number(latestBlock?.blockNumber) + 1 ||
         appConfig.beginningBlock ||
         this._beginningBlock
       );
@@ -248,6 +251,12 @@ export class CrawlService {
             key: latestBlockKey,
             blockNumber: BigInt(toBlock),
           })
+          .execute();
+      } else {
+        await tx
+          .update(latestBlocks)
+          .set({ blockNumber: BigInt(toBlock) })
+          .where(eq(latestBlocks.key, latestBlockKey))
           .execute();
       }
     });
