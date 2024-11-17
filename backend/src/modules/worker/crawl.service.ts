@@ -13,6 +13,7 @@ import { candidates } from 'src/database/schemas/candidates.schema';
 import { contests } from 'src/database/schemas/contests.schema';
 import { latestBlocks } from 'src/database/schemas/latest-blocks.schema';
 import { users } from 'src/database/schemas/users.schema';
+import { votes } from 'src/database/schemas/votes.schema';
 import { getFromCache } from 'src/utils/cache';
 import { unixToUTCDate } from 'src/utils/moment';
 
@@ -93,10 +94,10 @@ export class CrawlService {
   async listenPastEvents(): Promise<void> {
     this._latestBlock = await this.getLatestBlock();
     const key = `crawl:${this._symbolNetwork}_${this._contractAddress}`;
-    // const latestBlockRedis = await this.redisService.get(key);
-    // if (latestBlockRedis && Number(latestBlockRedis) > this._latestBlock) {
-    //   this._latestBlock = Number(latestBlockRedis);
-    // }
+    const latestBlockRedis = await this.redisService.get(key);
+    if (latestBlockRedis && Number(latestBlockRedis) > this._latestBlock) {
+      this._latestBlock = Number(latestBlockRedis);
+    }
 
     let fromBlock = Number(this._latestBlock);
     const toBlock = await this._provider.getBlockNumber();
@@ -123,35 +124,86 @@ export class CrawlService {
   }
 
   async listenRealtimeEvents(): Promise<void> {
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+    const BASE_DELAY = 10000; // 10 seconds
+    const MAX_DELAY = 60000; // 1 minute
+
     const poll = async () => {
       try {
+        // Get latest block with confirmation depth
         const latestBlock = await this._provider.getBlockNumber();
-        const events = await this.fetchEventsBatch(
+        const confirmedBlock = latestBlock - 12; // Wait 12 blocks for finality
+
+        // Don't process if we're already up to date
+        if (confirmedBlock <= this._latestBlock) {
+          logger.debug(
+            `[${this._symbolNetwork}] | No new blocks to process: current=${this._latestBlock}, latest=${confirmedBlock}`,
+          );
+          scheduleNextPoll(BASE_DELAY);
+          return;
+        }
+
+        // Fetch events with retries
+        const events = await this.fetchEventsBatchWithRetry(
           this._latestBlock,
-          latestBlock,
+          confirmedBlock,
+          MAX_RETRIES,
         );
 
         if (events.length > 0) {
           await this.handleEventsInBatches(events);
+          retryCount = 0; // Reset retry count on success
         } else {
           logger.debug(
-            `[${this._symbolNetwork}] | No new events found: ${this._latestBlock} - ${latestBlock}`,
+            `[${this._symbolNetwork}] | No new events found: ${this._latestBlock} - ${confirmedBlock}`,
           );
         }
 
-        this._latestBlock = latestBlock;
-        const key = `crawl:${this._symbolNetwork}_${this._contractAddress}`;
-        await this.redisService.set(key, this._latestBlock, 3600); // 1 hour
-      } catch (error) {
-        logger.error(
-          `[${this._symbolNetwork}] | Error polling for real-time events: ${error}`,
-        );
-      }
+        // Update latest block and cache
+        this._latestBlock = confirmedBlock;
+        // TODO: Uncomment this when we have a working Redis instance
+        // const key = `crawl:${this._symbolNetwork}_${this._contractAddress}`;
+        // await this.redisService.set(key, this._latestBlock, 3600); // Cache for 1 hour
 
-      setTimeout(poll, 10000);
+        scheduleNextPoll(BASE_DELAY);
+      } catch (error) {
+        retryCount++;
+        const delay = Math.min(BASE_DELAY * Math.pow(2, retryCount), MAX_DELAY);
+
+        logger.error(
+          `[${this._symbolNetwork}] | Error polling for real-time events (attempt ${retryCount}): ${error}`,
+        );
+
+        scheduleNextPoll(delay);
+      }
     };
 
+    const scheduleNextPoll = (delay: number) => {
+      setTimeout(poll, delay);
+    };
+
+    // Start polling
     poll();
+  }
+
+  // Helper method with retries
+  private async fetchEventsBatchWithRetry(
+    fromBlock: number,
+    toBlock: number,
+    maxRetries: number,
+  ): Promise<Array<any>> {
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        return await this.fetchEventsBatch(fromBlock, toBlock);
+      } catch (error) {
+        if (i === maxRetries - 1) throw error;
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * Math.pow(2, i)),
+        );
+      }
+    }
+    return [];
   }
 
   private async getLatestBlock(): Promise<number> {
@@ -198,78 +250,6 @@ export class CrawlService {
           })
           .execute();
       }
-    });
-  }
-
-  private async handleCandidateAddedEvent(event: any): Promise<void> {
-    logger.info(`Handling CandidateAdded event: ${JSON.stringify(event)}`);
-
-    const { blockNumber, transactionHash, address } = event;
-    const [voteId, candidateId, name] = event.args;
-
-    const transaction = await this._provider.getTransaction(transactionHash);
-
-    if (!transaction) {
-      logger.error(`Transaction not found for hash: ${transactionHash}`);
-      return;
-    }
-    const from = transaction.from;
-    const to = transaction.to;
-
-    const block = await this._provider.getBlock(blockNumber);
-    if (!block) {
-      logger.error(`Block not found for block number: ${blockNumber}`);
-      return;
-    }
-    const { timestamp } = block;
-
-    await db.transaction(async (tx) => {
-      const candidateAddedExist = await getFromCache(
-        `candidateAdded_${transactionHash}_${blockNumber}`,
-        async () => {
-          const [candidateAdded] = await tx
-            .select({ id: candidates.id })
-            .from(candidates)
-            .where(
-              and(
-                eq(candidates.transactionHash, transactionHash),
-                eq(candidates.blockNumber, BigInt(timestamp)),
-              ),
-            )
-            .limit(1);
-
-          return candidateAdded;
-        },
-        60, // 1 minute
-      );
-
-      if (!candidateAddedExist) {
-        const [userExist] = await tx
-          .select({ id: users.id })
-          .from(users)
-          .where(eq(users.walletAddress, from))
-          .limit(1)
-          .execute();
-
-        if (userExist) {
-          await tx
-            .insert(candidates)
-            .values({
-              voteId,
-              candidateId,
-              blockTimestamp: unixToUTCDate(timestamp),
-              blockNumber,
-              transactionHash,
-            })
-            .execute();
-
-          logger.verbose(
-            `[${this._symbolNetwork}] | Crawl Candidate Successful [VoteID - CandidateID - Block Number - Transaction Hash]: [${voteId} - ${candidateId} - ${blockNumber} - ${transactionHash}]`,
-          );
-        }
-      }
-
-      await this.updateLatestBlock(blockNumber);
     });
   }
 
@@ -374,8 +354,146 @@ export class CrawlService {
     });
   }
 
+  private async handleCandidateAddedEvent(event: any): Promise<void> {
+    logger.info(`Handling CandidateAdded event: ${JSON.stringify(event)}`);
+
+    const { blockNumber, transactionHash, address } = event;
+    const [voteId, candidateId, name] = event.args;
+
+    const transaction = await this._provider.getTransaction(transactionHash);
+
+    if (!transaction) {
+      logger.error(`Transaction not found for hash: ${transactionHash}`);
+      return;
+    }
+    const from = transaction.from;
+
+    const block = await this._provider.getBlock(blockNumber);
+    if (!block) {
+      logger.error(`Block not found for block number: ${blockNumber}`);
+      return;
+    }
+    const { timestamp } = block;
+
+    await db.transaction(async (tx) => {
+      const candidateAddedExist = await getFromCache(
+        `candidateAdded_${transactionHash}_${blockNumber}`,
+        async () => {
+          const [candidateAdded] = await tx
+            .select({ id: candidates.id })
+            .from(candidates)
+            .where(
+              and(
+                eq(candidates.transactionHash, transactionHash),
+                eq(candidates.blockNumber, BigInt(timestamp)),
+              ),
+            )
+            .limit(1);
+
+          return candidateAdded;
+        },
+        60, // 1 minute
+      );
+
+      if (!candidateAddedExist) {
+        const [userExist] = await tx
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.walletAddress, from))
+          .limit(1)
+          .execute();
+
+        if (userExist) {
+          await tx
+            .insert(candidates)
+            .values({
+              voteId,
+              candidateId,
+              name,
+              blockTimestamp: unixToUTCDate(timestamp),
+              blockNumber,
+              transactionHash,
+            })
+            .execute();
+
+          logger.verbose(
+            `[${this._symbolNetwork}] | Crawl Candidate Successful [VoteID - CandidateID - Block Number - Transaction Hash]: [${voteId} - ${candidateId} - ${blockNumber} - ${transactionHash}]`,
+          );
+        }
+      }
+
+      await this.updateLatestBlock(blockNumber);
+    });
+  }
+
   private async handleVotedEvent(event: any): Promise<void> {
-    // Implement handling logic for Voted event
     logger.info(`Handling Voted event: ${JSON.stringify(event)}`);
+
+    const { blockNumber, transactionHash, address } = event;
+    const [voteId, candidateId, voter] = event.args;
+
+    const transaction = await this._provider.getTransaction(transactionHash);
+
+    if (!transaction) {
+      logger.error(`Transaction not found for hash: ${transactionHash}`);
+      return;
+    }
+
+    const block = await this._provider.getBlock(blockNumber);
+    if (!block) {
+      logger.error(`Block not found for block number: ${blockNumber}`);
+      return;
+    }
+    const { timestamp } = block;
+
+    await db.transaction(async (tx) => {
+      const votedExist = await getFromCache(
+        `voted_${transactionHash}_${blockNumber}`,
+        async () => {
+          const [voted] = await tx
+            .select({ id: votes.id })
+            .from(votes)
+            .where(
+              and(
+                eq(votes.transactionHash, transactionHash),
+                eq(votes.blockNumber, BigInt(timestamp)),
+              ),
+            )
+            .limit(1);
+
+          return voted;
+        },
+        60, // 1 minute
+      );
+
+      if (!votedExist) {
+        const [userExist] = await tx
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.walletAddress, voter))
+          .limit(1)
+          .execute();
+
+        if (userExist) {
+          await tx
+            .insert(votes)
+            .values({
+              voteId,
+              candidateId,
+              voterAddress: voter,
+              blockTimestamp: unixToUTCDate(timestamp),
+              blockNumber,
+              transactionHash,
+            })
+            .execute();
+
+          logger.verbose(
+            `[${this._symbolNetwork}] | Crawl Vote Successful [VoteID - CandidateID - Block Number - Transaction Hash]: [${voteId} - ${candidateId} - ${blockNumber} - ${transactionHash}]`,
+          );
+        }
+      }
+
+      await this.updateLatestBlock(blockNumber);
+    });
   }
 }

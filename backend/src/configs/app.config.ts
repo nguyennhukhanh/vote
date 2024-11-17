@@ -14,7 +14,7 @@ const appConfig = {
   contractAddress:
     process.env.CONTRACT_ADDRESS ||
     '0x389f44Af18182305ff149c021dFEc713E2a4806f',
-  beginningBlock: Number(process.env.BEGINNING_BLOCK) || 45683652,
+  beginningBlock: Number(process.env.BEGINNING_BLOCK) || 45698583,
 };
 
 export { appConfig, appValidator };

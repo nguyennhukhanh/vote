@@ -11,6 +11,7 @@ import { contests } from './contests.schema';
 export const candidates = mysqlTable('candidates', {
   id: int().primaryKey().autoincrement(),
   candidateId: int().unique(),
+  name: varchar({ length: 255 }).notNull(),
   voteId: int()
     .notNull()
     .references(() => contests.voteId, { onDelete: 'cascade' }),
