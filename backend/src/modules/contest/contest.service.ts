@@ -1,15 +1,47 @@
 import type { SQL } from 'drizzle-orm';
 import { and, asc, desc, eq, gte, like, lte, or, sql } from 'drizzle-orm';
 import type { MySqlSelect } from 'drizzle-orm/mysql-core';
+import type { Contract } from 'ethers';
+import { ethers, JsonRpcProvider, type Provider } from 'ethers';
+import fs from 'fs';
+import { appConfig } from 'src/configs/app.config';
 import { db } from 'src/database/db';
-import { admins } from 'src/database/schemas/admins.schema';
+import { type Admin, admins } from 'src/database/schemas/admins.schema';
 import { contests } from 'src/database/schemas/contests.schema';
 import { SortEnum } from 'src/shared/enums';
+import { dateToUnixTimestamp } from 'src/utils/moment';
 import { paginate, type PaginatedResult } from 'src/utils/paginate';
 
+import type { ContestCreate } from './dto/contest.create';
 import type { ContestQuery } from './dto/contest.query';
 
 export class ContestService {
+  private _provider: Provider;
+  private _contract: Contract;
+
+  constructor() {
+    this._provider = new JsonRpcProvider(appConfig.rpcEndpoint);
+    const contractAbi = fs.readFileSync(
+      './abis/multi-contest-voting.abi.json',
+      'utf8',
+    );
+
+    if (!appConfig.ownerPrivateKey) {
+      throw new Error('Owner private key is not defined');
+    }
+
+    const ownerWallet = new ethers.Wallet(
+      appConfig.ownerPrivateKey,
+      this._provider,
+    );
+
+    this._contract = new ethers.Contract(
+      appConfig.contractAddress,
+      contractAbi,
+      ownerWallet,
+    );
+  }
+
   async getContestsWithPagination<T>(
     query: ContestQuery,
   ): Promise<PaginatedResult<T>> {
@@ -61,5 +93,43 @@ export class ContestService {
     }
 
     return await paginate(db, queryBuilder, page, limit);
+  }
+
+  async createContest(admin: Admin, dto: ContestCreate) {
+    const { name, startTime, endTime } = dto;
+
+    return await db.transaction(async (tx) => {
+      try {
+        const voteIdTx = await this._contract.createVote(
+          dateToUnixTimestamp(startTime),
+          dateToUnixTimestamp(endTime),
+        );
+
+        const receipt = await voteIdTx.wait();
+
+        const newContest = await tx
+          .insert(contests)
+          .values({
+            name,
+            createdBy: admin.id,
+            startTime: new Date(startTime),
+            endTime: new Date(endTime),
+            blockNumber: receipt?.blockNumber,
+            transactionHash: receipt?.hash,
+          })
+          .$returningId();
+
+        return {
+          id: newContest[0].id,
+          name,
+          startTime,
+          endTime,
+          blockNumber: receipt?.blockNumber,
+          transactionHash: receipt?.hash,
+        };
+      } catch (error) {
+        throw error;
+      }
+    });
   }
 }

@@ -6,6 +6,7 @@ appValidator.field('port').required().number();
 appValidator.field('rpcEndpoint').required().string();
 appValidator.field('contractAddress').required().string();
 appValidator.field('beginningBlock').required().number();
+appValidator.field('ownerPrivateKey').required().string();
 
 const appConfig = {
   port: Number(process.env.PORT) || 3000,
@@ -15,6 +16,7 @@ const appConfig = {
     process.env.CONTRACT_ADDRESS ||
     '0x389f44Af18182305ff149c021dFEc713E2a4806f',
   beginningBlock: Number(process.env.BEGINNING_BLOCK) || 45698583,
+  ownerPrivateKey: process.env.OWNER_PRIVATE_KEY,
 };
 
 export { appConfig, appValidator };

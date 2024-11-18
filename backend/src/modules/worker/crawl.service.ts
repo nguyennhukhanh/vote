@@ -331,7 +331,7 @@ export class CrawlService {
             .where(
               and(
                 eq(contests.transactionHash, transactionHash),
-                eq(contests.blockNumber, BigInt(timestamp)),
+                eq(contests.blockNumber, blockNumber),
               ),
             )
             .limit(1);
@@ -355,7 +355,27 @@ export class CrawlService {
           .execute();
 
         logger.verbose(
-          `[${this._symbolNetwork}] | Crawl Contest Successful [VoteID - StartTime - EndTime - Block Number - Transaction Hash]: [${voteId} - ${startTime} - ${endTime} - ${blockNumber} - ${transactionHash}]`,
+          `[${this._symbolNetwork}] | Crawl Contest Created [VoteID - StartTime - EndTime - Block Number - Transaction Hash]: [${voteId} - ${startTime} - ${endTime} - ${blockNumber} - ${transactionHash}]`,
+        );
+      } else {
+        await tx
+          .update(contests)
+          .set({
+            voteId,
+            startTime: unixToUTCDate(startTime),
+            endTime: unixToUTCDate(endTime),
+            blockTimestamp: unixToUTCDate(timestamp),
+          })
+          .where(
+            and(
+              eq(contests.transactionHash, transactionHash),
+              eq(contests.blockNumber, blockNumber),
+            ),
+          )
+          .execute();
+
+        logger.verbose(
+          `[${this._symbolNetwork}] | Crawl Contest Updated [VoteID - EndTime - Block Number - Transaction Hash]: [${voteId} - ${endTime} - ${blockNumber} - ${transactionHash}]`,
         );
       }
 
@@ -394,7 +414,7 @@ export class CrawlService {
             .where(
               and(
                 eq(candidates.transactionHash, transactionHash),
-                eq(candidates.blockNumber, BigInt(timestamp)),
+                eq(candidates.blockNumber, blockNumber),
               ),
             )
             .limit(1);
@@ -469,7 +489,7 @@ export class CrawlService {
             .where(
               and(
                 eq(votes.transactionHash, transactionHash),
-                eq(votes.blockNumber, BigInt(timestamp)),
+                eq(votes.blockNumber, blockNumber),
               ),
             )
             .limit(1);

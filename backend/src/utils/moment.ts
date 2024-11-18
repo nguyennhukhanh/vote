@@ -13,10 +13,10 @@ function unixToUTCDate(timestamp: string | number): Date {
 /**
  * Converts a date to a Unix timestamp.
  *
- * @param {Date} date - The date to convert.
+ * @param {Date | string | number} date - The date to convert.
  * @returns {number} - The converted Unix timestamp.
  */
-function dateToUnixTimestamp(date: Date): number {
+function dateToUnixTimestamp(date: Date | string | number): number {
   return moment(date).unix();
 }
 

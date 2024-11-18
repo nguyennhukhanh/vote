@@ -2,6 +2,7 @@ import type { IRequestContext } from '@thanhhoajs/thanhhoa';
 import { customResponse } from 'src/utils/custom-response';
 
 import type { ContestService } from './contest.service';
+import { ContestCreate } from './dto/contest.create';
 import { ContestQuery } from './dto/contest.query';
 
 export class ContestController {
@@ -54,9 +55,46 @@ export class ContestController {
    *       200:
    *         description: List of contests
    */
-  async getContestsWithPagination(ctx: IRequestContext) {
-    const query = new ContestQuery(ctx.query);
+  async getContestsWithPagination(context: IRequestContext) {
+    const query = new ContestQuery(context.query);
     const result = await this.contestService.getContestsWithPagination(query);
+    return customResponse(result);
+  }
+
+  /**
+   * @swagger
+   * /api/contest:
+   *   post:
+   *     security:
+   *       - bearerAuth: []
+   *     tags:
+   *       - contest
+   *     summary: Create a new contest
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *               startTime:
+   *                 type: string
+   *                 format: date-time
+   *               endTime:
+   *                 type: string
+   *                 format: date-time
+   *     responses:
+   *       200:
+   *         description: Contest created successfully
+   */
+  async createContest(context: IRequestContext) {
+    const admin = context.admin;
+    const { name, startTime, endTime } = await context.request.json();
+    const dto = new ContestCreate({ name, startTime, endTime });
+
+    const result = await this.contestService.createContest(admin, dto);
     return customResponse(result);
   }
 }
