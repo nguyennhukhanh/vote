@@ -341,23 +341,7 @@ export class CrawlService {
         60, // 1 minute
       );
 
-      if (!contestsCreatedExist) {
-        await tx
-          .insert(contests)
-          .values({
-            voteId,
-            startTime: unixToUTCDate(startTime),
-            endTime: unixToUTCDate(endTime),
-            blockTimestamp: unixToUTCDate(timestamp),
-            blockNumber,
-            transactionHash,
-          })
-          .execute();
-
-        logger.verbose(
-          `[${this._symbolNetwork}] | Crawl Contest Created [VoteID - StartTime - EndTime - Block Number - Transaction Hash]: [${voteId} - ${startTime} - ${endTime} - ${blockNumber} - ${transactionHash}]`,
-        );
-      } else {
+      if (contestsCreatedExist) {
         await tx
           .update(contests)
           .set({
@@ -395,7 +379,6 @@ export class CrawlService {
       logger.error(`Transaction not found for hash: ${transactionHash}`);
       return;
     }
-    const from = transaction.from;
 
     const block = await this._provider.getBlock(blockNumber);
     if (!block) {
@@ -424,31 +407,26 @@ export class CrawlService {
         60, // 1 minute
       );
 
-      if (!candidateAddedExist) {
-        const [userExist] = await tx
-          .select({ id: users.id })
-          .from(users)
-          .where(eq(users.walletAddress, from))
-          .limit(1)
+      if (candidateAddedExist) {
+        await tx
+          .update(candidates)
+          .set({
+            voteId,
+            candidateId,
+            name,
+            blockTimestamp: unixToUTCDate(timestamp),
+          })
+          .where(
+            and(
+              eq(candidates.transactionHash, transactionHash),
+              eq(candidates.blockNumber, blockNumber),
+            ),
+          )
           .execute();
 
-        if (userExist) {
-          await tx
-            .insert(candidates)
-            .values({
-              voteId,
-              candidateId,
-              name,
-              blockTimestamp: unixToUTCDate(timestamp),
-              blockNumber,
-              transactionHash,
-            })
-            .execute();
-
-          logger.verbose(
-            `[${this._symbolNetwork}] | Crawl Candidate Successful [VoteID - CandidateID - Block Number - Transaction Hash]: [${voteId} - ${candidateId} - ${blockNumber} - ${transactionHash}]`,
-          );
-        }
+        logger.verbose(
+          `[${this._symbolNetwork}] | Crawl Candidate Updated [VoteID - CandidateID - Block Number - Transaction Hash]: [${voteId} - ${candidateId} - ${blockNumber} - ${transactionHash}]`,
+        );
       }
 
       await this.updateLatestBlock(blockNumber);

@@ -3,6 +3,7 @@ import { customResponse } from 'src/utils/custom-response';
 
 import { CandidateQuery } from '../candidate/dto/candidate.query';
 import type { CandidateService } from './candidate.service';
+import { CandidateCreate } from './dto/candidate.create';
 
 export class CandidateController {
   constructor(private readonly candidateService: CandidateService) {}
@@ -58,6 +59,76 @@ export class CandidateController {
     const query = new CandidateQuery(context.query);
     const result = await this.candidateService.getCandidatesWithPagination(
       query,
+    );
+    return customResponse(result);
+  }
+
+  /**
+   * @swagger
+   * /api/candidate/{id}:
+   *   get:
+   *     security:
+   *       - bearerAuth: []
+   *     tags:
+   *       - candidate
+   *     summary: Get candidate
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: integer
+   *         required: true
+   *         description: Candidate id
+   *     responses:
+   *       200:
+   *         description: Candidate detail
+   */
+  async getCandidateById(context: IRequestContext) {
+    const id = Number(context.params.id);
+    const result = await this.candidateService.getCandidateById(id);
+    return customResponse(result);
+  }
+
+  /**
+   * @swagger
+   * /api/candidate/{voteId}:
+   *   post:
+   *     security:
+   *       - bearerAuth: []
+   *     tags:
+   *       - candidate
+   *     summary: Create candidate
+   *     parameters:
+   *       - in: path
+   *         name: voteId
+   *         schema:
+   *           type: integer
+   *         required: true
+   *         description: Vote id
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *                 required: true
+   *     responses:
+   *       200:
+   *         description: Candidate created
+   */
+  async createCandidate(context: IRequestContext) {
+    const admin = context.admin;
+    const voteId = Number(context.params.voteId);
+    const { name } = await context.request.json();
+    const dto = new CandidateCreate(name);
+
+    const result = await this.candidateService.createCandidate(
+      admin,
+      voteId,
+      dto,
     );
     return customResponse(result);
   }

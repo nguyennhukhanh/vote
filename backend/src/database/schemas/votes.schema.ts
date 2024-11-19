@@ -6,7 +6,6 @@ import {
   varchar,
 } from 'drizzle-orm/mysql-core';
 
-import { candidates } from './candidates.schema';
 import { contests } from './contests.schema';
 
 export const votes = mysqlTable('votes', {
@@ -14,9 +13,7 @@ export const votes = mysqlTable('votes', {
   voteId: int()
     .notNull()
     .references(() => contests.voteId, { onDelete: 'cascade' }),
-  candidateId: int()
-    .notNull()
-    .references(() => candidates.candidateId, { onDelete: 'cascade' }),
+  candidateId: int().notNull(),
   voterAddress: varchar({ length: 100 }).notNull(),
   blockTimestamp: timestamp({ mode: 'date' }),
   blockNumber: bigint({ mode: 'bigint', unsigned: true }),
