@@ -6,6 +6,7 @@ import { CandidateModule } from './candidate/candidate.module';
 import { ContestModule } from './contest/contest.module';
 import { DefaultModule } from './default/default.module';
 import { UserModule } from './user/user.module';
+import { VoteModule } from './vote/vote.module';
 
 export class AppModule {
   constructor(app: ThanhHoa) {
@@ -15,5 +16,6 @@ export class AppModule {
     new UserModule(app);
     new ContestModule(app);
     new CandidateModule(app);
+    new VoteModule(app);
   }
 }
