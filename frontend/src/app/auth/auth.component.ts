@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import type { OnInit } from '@angular/core';
 import { Component, Inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { WalletEnum } from '../../common/enums';
@@ -9,6 +8,7 @@ import { AuthApiEnum, GroupApiEnum } from '../../common/enums/api.enum';
 import type { IResponse } from '../../common/interfaces/response.interface';
 import { environment } from '../../environments/environment.development';
 import { GoogleAuthService } from '../services/google-auth.service';
+import { StoreService } from '../services/store.service';
 import { WalletService } from '../services/wallet.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { WalletService } from '../services/wallet.service';
 export class AuthComponent implements OnInit {
   constructor(
     @Inject(HttpClient) private http: HttpClient,
-    @Inject(Router) private router: Router,
+    @Inject(StoreService) private readonly store: StoreService,
     @Inject(GoogleAuthService)
     private readonly googleAuthService: GoogleAuthService,
     @Inject(WalletService) private readonly walletService: WalletService,
@@ -56,7 +56,7 @@ export class AuthComponent implements OnInit {
         ),
       );
 
-      this.saveTokens(response?.data?.tokens);
+      this.store.saveTokens(response?.data?.tokens, true);
     } catch (error) {
       throw error;
     }
@@ -120,15 +120,9 @@ export class AuthComponent implements OnInit {
         ),
       );
 
-      this.saveTokens(response?.data?.tokens);
+      this.store.saveTokens(response?.data?.tokens, true);
     } catch (error) {
       throw error;
     }
-  }
-
-  private saveTokens(tokens: object) {
-    localStorage.setItem('tokens', JSON.stringify(tokens));
-
-    this.router.navigate(['']);
   }
 }

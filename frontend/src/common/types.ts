@@ -1,0 +1,5 @@
+export type TokensType = {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number; // in milliseconds
+};

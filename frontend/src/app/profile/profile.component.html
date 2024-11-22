@@ -1,0 +1,104 @@
+<div class="container mx-auto px-4 py-8">
+  @if (isLoading) {
+    <div class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  } @else if (profile) {
+    <div class="max-w-4xl mx-auto">
+      <div class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-8">
+        <!-- Avatar -->
+        <div class="w-32 h-32 md:w-40 md:h-40">
+          <img
+            [src]="defaultAvatar"
+            [alt]="profile.id.toString()"
+            class="rounded-full w-full h-full object-cover border-2 border-gray-200"
+          />
+        </div>
+
+        <!-- Profile Info -->
+        <div class="flex-1">
+          <div class="flex flex-col md:flex-row items-center md:items-start gap-4 mb-4">
+            <h1 class="text-2xl font-semibold">User #{{profile.id}}</h1>
+            <button class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+              Edit Profile
+            </button>
+          </div>
+
+          <!-- User Info -->
+          <div class="text-center md:text-left">
+            @if (profile.fullName) {
+              <h2 class="font-semibold mb-2">{{profile.fullName}}</h2>
+            }
+            @if (profile.email) {
+              <p class="text-gray-600">{{profile.email}}</p>
+            }
+            <p class="text-gray-500 text-sm mt-2">
+              Joined: {{profile.createdAt | date:'mediumDate'}}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activities Section -->
+      <div class="mt-8">
+        <h2 class="text-xl font-semibold mb-4">Recent Activities</h2>
+        <div class="space-y-4">
+          <!-- Activity 1 -->
+          <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center gap-3 mb-2">
+              <img [src]="defaultAvatar" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="font-medium">Created a vote</span>
+                <span class="text-gray-500 text-sm ml-2">2 hours ago</span>
+              </div>
+            </div>
+            <div class="pl-11">
+              <h3 class="font-medium">Which programming language is better?</h3>
+              <div class="mt-2 text-sm text-gray-600">
+                Options: JavaScript, Python, Java
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity 2 -->
+          <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center gap-3 mb-2">
+              <img [src]="defaultAvatar" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="font-medium">Voted on</span>
+                <span class="text-gray-500 text-sm ml-2">5 hours ago</span>
+              </div>
+            </div>
+            <div class="pl-11">
+              <h3 class="font-medium">What's your favorite text editor?</h3>
+              <div class="mt-2 text-sm text-gray-600">
+                Voted: VS Code
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity 3 -->
+          <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center gap-3 mb-2">
+              <img [src]="defaultAvatar" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="font-medium">Commented on</span>
+                <span class="text-gray-500 text-sm ml-2">1 day ago</span>
+              </div>
+            </div>
+            <div class="pl-11">
+              <h3 class="font-medium">Best Frontend Framework 2024</h3>
+              <div class="mt-2 text-sm text-gray-600">
+                "Angular is definitely the most robust option for enterprise applications"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="text-center text-gray-500">
+      Failed to load profile
+    </div>
+  }
+</div>
