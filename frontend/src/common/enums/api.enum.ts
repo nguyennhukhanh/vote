@@ -12,3 +12,7 @@ export enum AuthApiEnum {
 }
 
 export enum UserApiEnum {}
+
+export enum ContestApiEnum {
+  GET_ALL = '/contest',
+}
