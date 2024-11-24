@@ -10,6 +10,7 @@ import { db } from 'src/database/db';
 import type { Admin } from 'src/database/schemas/admins.schema';
 import { candidates } from 'src/database/schemas/candidates.schema';
 import { contests } from 'src/database/schemas/contests.schema';
+import { votes } from 'src/database/schemas/votes.schema';
 import { SortEnum } from 'src/shared/enums';
 import { paginate, type PaginatedResult } from 'src/utils/paginate';
 
@@ -69,13 +70,22 @@ export class CandidateService {
           endTime: contests.endTime,
           voteId: contests.voteId,
         },
+        totalVotes: sql`COUNT(DISTINCT ${votes.id})`,
         blockTimestamp: candidates.blockTimestamp,
         blockNumber: candidates.blockNumber,
         transactionHash: candidates.transactionHash,
         createdAt: candidates.createdAt,
       })
       .from(candidates)
-      .innerJoin(contests, eq(candidates.voteId, contests.voteId));
+      .innerJoin(contests, eq(candidates.voteId, contests.voteId))
+      .leftJoin(
+        votes,
+        and(
+          eq(votes.voteId, candidates.voteId),
+          eq(votes.candidateId, candidates.candidateId),
+        ),
+      )
+      .groupBy(candidates.id);
 
     if (voteId) filters.push(eq(candidates.voteId, voteId));
     if (search) {

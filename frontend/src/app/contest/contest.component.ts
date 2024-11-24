@@ -6,8 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
+import { ContestTimeStatus } from '../../common/enums';
 import { ContestApiEnum } from '../../common/enums/api.enum';
 import type { IResponse } from '../../common/interfaces/response.interface';
+import {
+  formatDate,
+  getContestStatusStyle,
+  getContestTimeStatus,
+  getTimeRemaining,
+} from '../../common/utils/time.util';
 import { environment } from '../../environments/environment.development';
 import { StoreService } from '../services/store.service';
 
@@ -87,65 +94,32 @@ export class ContestComponent implements OnInit {
   }
 
   isContestActive(contest: any): boolean {
-    const now = new Date().getTime();
-    const startTime = new Date(contest.startTime).getTime();
-    const endTime = new Date(contest.endTime).getTime();
-    return now >= startTime && now <= endTime;
+    return (
+      getContestTimeStatus(contest.startTime, contest.endTime) ===
+      ContestTimeStatus.ACTIVE
+    );
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return formatDate(date);
   }
 
-  getContestStatus(contest: any): 'upcoming' | 'active' | 'ended' {
-    const now = new Date().getTime();
-    const startTime = new Date(contest.startTime).getTime();
-    const endTime = new Date(contest.endTime).getTime();
-
-    if (now < startTime) return 'upcoming';
-    if (now > endTime) return 'ended';
-    return 'active';
+  getContestStatus(contest: any): ContestTimeStatus {
+    return getContestTimeStatus(contest.startTime, contest.endTime);
   }
 
-  getStatusStyle(status: 'upcoming' | 'active' | 'ended'): {
-    badge: string;
-    card: string;
-  } {
-    const styles = {
-      upcoming: {
-        badge: 'bg-yellow-100 text-yellow-800',
-        card: 'border-l-4 border-yellow-400',
-      },
-      active: {
-        badge: 'bg-green-100 text-green-800',
-        card: 'border-l-4 border-green-400',
-      },
-      ended: {
-        badge: 'bg-gray-100 text-gray-800',
-        card: 'border-l-4 border-gray-400 opacity-75',
-      },
-    };
-    return styles[status] || styles.ended;
+  getStatusStyle(status: ContestTimeStatus) {
+    return getContestStatusStyle(status);
   }
 
   getTimeRemaining(contest: any): string {
-    const now = new Date().getTime();
-    const startTime = new Date(contest.startTime).getTime();
-    const endTime = new Date(contest.endTime).getTime();
+    const status = getContestTimeStatus(contest.startTime, contest.endTime);
 
-    if (now < startTime) {
-      const days = Math.floor((startTime - now) / (1000 * 60 * 60 * 24));
-      return `Starts in ${days} days`;
+    if (status === ContestTimeStatus.UPCOMING) {
+      return `Starts in ${getTimeRemaining(contest.startTime)}`;
     }
-    if (now < endTime) {
-      const days = Math.floor((endTime - now) / (1000 * 60 * 60 * 24));
-      return `${days} days remaining`;
+    if (status === ContestTimeStatus.ACTIVE) {
+      return `${getTimeRemaining(contest.endTime)} remaining`;
     }
     return 'Contest ended';
   }

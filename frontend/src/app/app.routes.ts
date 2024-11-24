@@ -11,7 +11,6 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'contest', component: ContestComponent },
-  { path: 'candidate', component: CandidateComponent },
   { path: 'contest/:contestId/candidate', component: CandidateComponent },
   { path: '', component: HomeComponent },
 ];

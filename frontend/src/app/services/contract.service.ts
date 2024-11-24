@@ -15,10 +15,13 @@ export class ContractService {
     const { ethereum } = <any>window;
     this._provider = new ethers.BrowserProvider(ethereum);
 
-    this.init().then(() => {
-      this.candidateCount();
-      // this.vote(2);
-    });
+    this.init()
+      .then(() => {
+        console.log('Contract initialized');
+      })
+      .catch((error) => {
+        console.error('Error initializing contract:', error);
+      });
   }
 
   async init() {
@@ -34,53 +37,35 @@ export class ContractService {
     }
   }
 
-  async addCandidate(name: string) {
+  async getCandidate(voteId: number, candidateId: number) {
     try {
-      const tx = await this._contract.addCandidate(name);
-      await tx.wait();
-      console.log('Candidate added successfully');
-    } catch (error) {
-      console.error('Error adding candidate:', error);
-    }
-  }
-
-  async vote(candidateId: number) {
-    try {
-      const tx = await this._contract.vote(candidateId);
-      await tx.wait();
-      console.log('Vote successful');
-    } catch (error) {
-      console.error('Error voting:', error);
-    }
-  }
-
-  async getCandidate(candidateId: number) {
-    try {
-      const candidate = await this._contract.getCandidate(candidateId);
-      console.log('Candidate:', candidate);
+      const candidate = await this._contract.getCandidate(voteId, candidateId);
       return candidate;
     } catch (error) {
       console.error('Error fetching candidate:', error);
     }
   }
 
-  async candidateCount() {
+  async getContest(voteId: number) {
     try {
-      const count = await this._contract.candidateCount();
-      console.log('Total candidates:', count.toString());
-      return count;
+      if (!this._contract) {
+        await this.init();
+      }
+      const contest = await this._contract.votes(voteId);
+      return contest;
     } catch (error) {
-      console.error('Error fetching candidate count:', error);
+      console.error('Error fetching contest:', error);
+      throw error;
     }
   }
 
-  async hasVoted(address: string) {
+  async vote(votedId: number, candidateId: number) {
     try {
-      const voted = await this._contract.hasVoted(address);
-      console.log('Has voted:', voted);
-      return voted;
+      const tx = await this._contract.vote(votedId, candidateId);
+      const receipt = await tx.wait();
+      return { success: true, receipt };
     } catch (error) {
-      console.error('Error checking if user has voted:', error);
+      throw error;
     }
   }
 }

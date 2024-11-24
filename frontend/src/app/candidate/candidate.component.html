@@ -88,7 +88,7 @@
                 {{ candidate.name }}
               </h2>
               <p class="text-gray-600">
-                {{ candidate.description || 'No description available' }}
+                {{ candidate?.description || 'No description available' }}
               </p>
             </div>
 
@@ -124,7 +124,7 @@
                   />
                 </svg>
                 <a
-                  [href]="bscScanUrl + candidate.transactionHash"
+                  [href]="bscScanUrl + 'tx/' + candidate.transactionHash"
                   target="_blank"
                   class="text-blue-600 hover:text-blue-800 hover:underline"
                 >
@@ -140,15 +140,29 @@
           >
             <div class="text-center">
               <div class="text-3xl font-bold text-blue-600 mb-2">
-                {{ candidate.voteCount || 0 }}
+                {{ candidate.totalVotes || 0 }}
               </div>
               <div class="text-sm text-gray-600">Total Votes</div>
             </div>
-            <button
-              class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
-            >
-              Cast Your Vote
-            </button>
+            <div>
+              <p
+                class="text-sm"
+                [ngClass]="{
+                  'text-gray-500': !contractError,
+                  'text-red-500': contractError,
+                }"
+              >
+                {{ getContestStatusMessage() }}
+              </p>
+              <button
+                (click)="openVoteModal(candidate)"
+                [disabled]="!canVote()"
+                class="mt-2 w-full bg-gradient-to-r from-blue-600 to-purple-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
+              >
+                <span *ngIf="isLoadingContract">Loading...</span>
+                <span *ngIf="!isLoadingContract">Cast Your Vote</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -197,6 +211,236 @@
           >
             {{ i + 1 }}
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Vote Confirmation Modal -->
+<div
+  *ngIf="showVoteModal"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto"
+>
+  <div
+    class="bg-white rounded-2xl w-full max-w-5xl shadow-xl transform transition-all my-8"
+  >
+    <!-- Modal Header -->
+    <div
+      class="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white rounded-t-2xl"
+    >
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="text-3xl font-bold mb-2">
+            Vote for {{ selectedCandidate?.name }}
+          </h3>
+          <p class="text-lg opacity-90">{{ contestInfo?.name || 'Contest' }}</p>
+        </div>
+        <button
+          (click)="closeVoteModal()"
+          class="p-2 hover:bg-white/20 rounded-lg transition-colors"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="p-8">
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-2 gap-8">
+        <!-- Left Column -->
+        <div>
+          <!-- Candidate Info Card -->
+          <div class="bg-gray-50 rounded-xl p-6">
+            <div class="flex items-center space-x-4 mb-6">
+              <div
+                class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold"
+              >
+                {{ selectedCandidate?.name.charAt(0).toUpperCase() }}
+              </div>
+              <div>
+                <h4 class="text-2xl font-bold text-gray-900">
+                  {{ selectedCandidate?.name }}
+                </h4>
+                <p class="text-gray-500">
+                  ID: #{{ selectedCandidate?.candidateId }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Vote Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-white rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-blue-600">
+                  {{ selectedCandidate?.totalVotes || 0 }}
+                </div>
+                <p class="text-sm text-gray-600">Total Votes</p>
+              </div>
+              <div class="bg-white rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-purple-600">
+                  {{ voters.meta.totalItems || 0 }}
+                </div>
+                <p class="text-sm text-gray-600">Recent Votes</p>
+              </div>
+            </div>
+
+            <!-- Contest Status -->
+            <div class="border-t border-gray-200 pt-4">
+              <p class="font-medium text-gray-900 mb-2">Contest Status</p>
+              <p
+                [ngClass]="{
+                  'text-green-600': contestStatus === 2,
+                  'text-yellow-600': contestStatus === 1,
+                  'text-red-600': contestStatus === 3,
+                }"
+              >
+                {{ getContestStatusMessage() }}
+              </p>
+            </div>
+
+            <!-- Vote Action -->
+            <div class="mt-6">
+              <button
+                (click)="submitVote()"
+                [disabled]="isVoting || !canVote()"
+                class="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg font-medium rounded-lg transition-all duration-300 flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span
+                  *ngIf="isVoting"
+                  class="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                ></span>
+                <span>{{
+                  isVoting
+                    ? 'Confirming Vote...'
+                    : 'Confirm Vote for ' + selectedCandidate?.name
+                }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Voters List -->
+        <div class="bg-gray-50 rounded-xl p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h4 class="text-xl font-bold text-gray-900">Recent Voters</h4>
+            <span
+              class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+            >
+              Total: {{ voters.meta.totalItems || 0 }}
+            </span>
+          </div>
+
+          <!-- Voters Content -->
+          <div class="h-[500px] overflow-y-auto pr-2">
+            <!-- Loading State -->
+            <div *ngIf="isLoadingVoters" class="flex justify-center py-8">
+              <div
+                class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"
+              ></div>
+            </div>
+
+            <!-- Empty State -->
+            <div
+              *ngIf="!isLoadingVoters && !voters.items?.length"
+              class="text-center py-8 bg-white rounded-lg"
+            >
+              <p class="text-gray-500">No votes recorded yet</p>
+            </div>
+
+            <!-- Voters List -->
+            <div
+              *ngIf="!isLoadingVoters && voters.items?.length"
+              class="space-y-3"
+            >
+              <div
+                *ngFor="let vote of voters.items"
+                class="bg-white rounded-lg p-4 hover:shadow-md transition-shadow"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <p class="font-medium text-gray-900">
+                        {{ vote.voter.walletAddress | slice: 0 : 6 }}...{{
+                          vote.voter.walletAddress | slice: -4
+                        }}
+                      </p>
+                      <span
+                        class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full"
+                      >
+                        Block #{{ vote.blockNumber }}
+                      </span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-1">
+                      {{ formatDate(vote.blockTimestamp) }}
+                    </p>
+                  </div>
+                  <div class="flex space-x-2">
+                    <a
+                      [href]="bscScanUrl + 'tx/' + vote.transactionHash"
+                      target="_blank"
+                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="View Transaction"
+                    >
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                    </a>
+                    <a
+                      [href]="
+                        bscScanUrl + 'address/' + vote.voter.walletAddress
+                      "
+                      target="_blank"
+                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="View Address"
+                    >
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 9a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -15,7 +15,16 @@ export class VoteService {
   async getVotesWithPagination<T>(
     query: VoteQuery,
   ): Promise<PaginatedResult<T>> {
-    const { search, fromDate, toDate, sort, page = 1, limit = 10 } = query;
+    const {
+      voteId,
+      candidateId,
+      search,
+      fromDate,
+      toDate,
+      sort,
+      page = 1,
+      limit = 10,
+    } = query;
     const filters: SQL[] = [];
 
     const queryBuilder = db
@@ -29,9 +38,10 @@ export class VoteService {
           voteId: contests.voteId,
         },
         candidate: {
-          id: sql`${candidates.id} as responderCandidateId`,
-          name: candidates.name,
+          id: sql`${candidates.id} as responderId`,
+          name: sql`${candidates.name} as candidateName`,
           candidateId: candidates.candidateId,
+          voteId: sql`${candidates.voteId} as responderVoteId`,
         },
         voter: {
           id: sql`${users.id} as voterId`,
@@ -46,7 +56,13 @@ export class VoteService {
       })
       .from(votes)
       .innerJoin(contests, eq(votes.voteId, contests.voteId))
-      .innerJoin(candidates, eq(votes.candidateId, candidates.candidateId))
+      .innerJoin(
+        candidates,
+        and(
+          eq(votes.candidateId, candidates.candidateId),
+          eq(votes.voteId, candidates.voteId),
+        ),
+      )
       .innerJoin(users, eq(votes.voterAddress, users.walletAddress));
 
     if (search) {
@@ -57,6 +73,8 @@ export class VoteService {
         ) as SQL,
       );
     }
+    if (voteId) filters.push(eq(votes.voteId, voteId));
+    if (candidateId) filters.push(eq(votes.candidateId, candidateId));
     if (fromDate) filters.push(gte(votes.blockTimestamp, fromDate));
     if (toDate) filters.push(lte(votes.blockTimestamp, toDate));
 

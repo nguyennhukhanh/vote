@@ -3,7 +3,9 @@
     <!-- Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Active Contests</h1>
-      <p class="mt-2 text-sm text-gray-600">Browse and participate in ongoing voting contests</p>
+      <p class="mt-2 text-sm text-gray-600">
+        Browse and participate in ongoing voting contests
+      </p>
     </div>
 
     <!-- Enhanced Search and Filters -->
@@ -13,13 +15,28 @@
           <!-- Search Input -->
           <div class="md:col-span-4">
             <div class="relative">
-              <input type="text" [(ngModel)]="search"
-                     class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg outline-none
-                            focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm"
-                     placeholder="Search contests...">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <input
+                type="text"
+                [(ngModel)]="search"
+                class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm"
+                placeholder="Search contests..."
+              />
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
             </div>
@@ -28,21 +45,27 @@
           <!-- Date Range Inputs -->
           <div class="md:col-span-3">
             <div class="relative">
-              <input type="datetime-local"
-                     [(ngModel)]="fromDate"
-                     class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg outline-none
-                            focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm
-                            [&::-webkit-calendar-picker-indicator]:bg-transparent
-                            [&::-webkit-calendar-picker-indicator]:hover:cursor-pointer
-                            [&::-webkit-calendar-picker-indicator]:px-2
-                            [&::-webkit-calendar-picker-indicator]:hover:opacity-60
-                            [&::-webkit-datetime-edit-fields-wrapper]:p-0
-                            [&::-webkit-datetime-edit]:p-0
-                            appearance-none bg-white"
-                     placeholder="From date">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <input
+                type="datetime-local"
+                [(ngModel)]="fromDate"
+                class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:hover:cursor-pointer [&::-webkit-calendar-picker-indicator]:px-2 [&::-webkit-calendar-picker-indicator]:hover:opacity-60 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-datetime-edit]:p-0 appearance-none bg-white"
+                placeholder="From date"
+              />
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
             </div>
@@ -50,21 +73,27 @@
 
           <div class="md:col-span-3">
             <div class="relative">
-              <input type="datetime-local"
-                     [(ngModel)]="toDate"
-                     class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg outline-none
-                            focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm
-                            [&::-webkit-calendar-picker-indicator]:bg-transparent
-                            [&::-webkit-calendar-picker-indicator]:hover:cursor-pointer
-                            [&::-webkit-calendar-picker-indicator]:px-2
-                            [&::-webkit-calendar-picker-indicator]:hover:opacity-60
-                            [&::-webkit-datetime-edit-fields-wrapper]:p-0
-                            [&::-webkit-datetime-edit]:p-0
-                            appearance-none bg-white"
-                     placeholder="To date">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <input
+                type="datetime-local"
+                [(ngModel)]="toDate"
+                class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:hover:cursor-pointer [&::-webkit-calendar-picker-indicator]:px-2 [&::-webkit-calendar-picker-indicator]:hover:opacity-60 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-datetime-edit]:p-0 appearance-none bg-white"
+                placeholder="To date"
+              />
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
             </div>
@@ -72,12 +101,16 @@
 
           <!-- Action Buttons -->
           <div class="md:col-span-2 flex gap-2">
-            <button (click)="onSearch()"
-                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-150">
+            <button
+              (click)="onSearch()"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-150"
+            >
               Search
             </button>
-            <button (click)="clearFilters()"
-                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg transition-colors duration-150">
+            <button
+              (click)="clearFilters()"
+              class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg transition-colors duration-150"
+            >
               Clear
             </button>
           </div>
@@ -87,57 +120,97 @@
 
     <!-- Contest Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div *ngFor="let contest of contests.items"
-           class="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
-           [ngClass]="getStatusStyle(getContestStatus(contest)).card">
+      <div
+        *ngFor="let contest of contests.items"
+        class="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
+        [ngClass]="getStatusStyle(getContestStatus(contest)).card"
+      >
         <div class="p-6">
           <!-- Status Badge -->
           <div class="flex justify-between items-start mb-4">
-            <h2 class="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
-              {{contest.name}}
+            <h2
+              class="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300"
+            >
+              {{ contest.name }}
             </h2>
-            <span class="px-3 py-1 rounded-full text-sm font-medium"
-                  [ngClass]="getStatusStyle(getContestStatus(contest)).badge">
-              {{getContestStatus(contest) | titlecase}}
+            <span
+              class="px-3 py-1 rounded-full text-sm font-medium"
+              [ngClass]="getStatusStyle(getContestStatus(contest)).badge"
+            >
+              {{ getContestStatus(contest) | titlecase }}
             </span>
           </div>
 
           <!-- Time Remaining -->
-          <div class="mb-4 text-sm font-medium"
-               [ngClass]="{
-                 'text-yellow-600': getContestStatus(contest) === 'upcoming',
-                 'text-green-600': getContestStatus(contest) === 'active',
-                 'text-gray-600': getContestStatus(contest) === 'ended'
-               }">
-            {{getTimeRemaining(contest)}}
+          <div
+            class="mb-4 text-sm font-medium"
+            [ngClass]="{
+              'text-yellow-600': getContestStatus(contest) === 'upcoming',
+              'text-green-600': getContestStatus(contest) === 'active',
+              'text-gray-600': getContestStatus(contest) === 'ended',
+            }"
+          >
+            {{ getTimeRemaining(contest) }}
           </div>
 
           <!-- Contest Info -->
           <div class="space-y-3">
             <div class="flex items-center text-sm text-gray-600">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
               </svg>
-              <span>Created by {{contest.createdBy.fullName}}</span>
+              <span>Created by {{ contest.createdBy.fullName }}</span>
             </div>
 
             <div class="flex items-center text-sm text-gray-600">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
               <div class="flex flex-col">
-                <span>Starts: {{formatDate(contest.startTime)}}</span>
-                <span>Ends: {{formatDate(contest.endTime)}}</span>
+                <span>Starts: {{ formatDate(contest.startTime) }}</span>
+                <span>Ends: {{ formatDate(contest.endTime) }}</span>
               </div>
             </div>
 
             <div class="flex items-center text-sm text-gray-600">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
-              <a [href]="bscScanUrl + contest.transactionHash"
-                 target="_blank"
-                 class="text-blue-600 hover:text-blue-800 hover:underline">
+              <a
+                [href]="bscScanUrl + 'tx/' + contest.transactionHash"
+                target="_blank"
+                class="text-blue-600 hover:text-blue-800 hover:underline"
+              >
                 View on BSCScan
               </a>
             </div>
@@ -145,8 +218,10 @@
 
           <!-- Enhanced Action Button -->
           <div class="mt-4">
-            <button (click)="viewCandidates(contest.voteId)"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md">
+            <button
+              (click)="viewCandidates(contest.voteId)"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md"
+            >
               View Candidates
             </button>
           </div>
@@ -156,47 +231,64 @@
 
     <!-- Loading State -->
     <div *ngIf="isLoading" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+      ></div>
     </div>
 
     <!-- Enhanced Pagination -->
-    <div class="mt-8 flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm"
-         *ngIf="contests.meta && !isLoading">
+    <div
+      class="mt-8 flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm"
+      *ngIf="contests.meta && !isLoading"
+    >
       <div class="text-sm text-gray-700 mb-4 md:mb-0">
-        Showing <span class="font-medium">{{(currentPage-1) * itemsPerPage + 1}}</span> to
-        <span class="font-medium">{{Math.min(currentPage * itemsPerPage, contests.meta.totalItems)}}</span> of
-        <span class="font-medium">{{contests.meta.totalItems}}</span> contests
+        Showing
+        <span class="font-medium">{{
+          (currentPage - 1) * itemsPerPage + 1
+        }}</span>
+        to
+        <span class="font-medium">{{
+          Math.min(currentPage * itemsPerPage, contests.meta.totalItems)
+        }}</span>
+        of
+        <span class="font-medium">{{ contests.meta.totalItems }}</span> contests
       </div>
 
       <div class="inline-flex gap-2">
-        <button class="relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-300
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     border border-gray-300 text-gray-700 hover:bg-gray-50"
-                [disabled]="currentPage === 1"
-                (click)="onPageChange(currentPage - 1)">
+        <button
+          class="relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 text-gray-700 hover:bg-gray-50"
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)"
+        >
           Previous
         </button>
 
         <div class="inline-flex gap-1">
-          <button *ngFor="let page of [].constructor(contests.meta.totalPages); let i = index"
-                  class="relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-300"
-                  [ngClass]="currentPage === i + 1 ?
-                    'z-10 bg-blue-600 text-white' :
-                    'border border-gray-300 text-gray-700 hover:bg-gray-50'"
-                  (click)="onPageChange(i + 1)">
-            {{i + 1}}
+          <button
+            *ngFor="
+              let page of [].constructor(contests.meta.totalPages);
+              let i = index
+            "
+            class="relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-300"
+            [ngClass]="
+              currentPage === i + 1
+                ? 'z-10 bg-blue-600 text-white'
+                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+            "
+            (click)="onPageChange(i + 1)"
+          >
+            {{ i + 1 }}
           </button>
         </div>
 
-        <button class="relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-300
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     border border-gray-300 text-gray-700 hover:bg-gray-50"
-                [disabled]="currentPage === contests.meta.totalPages"
-                (click)="onPageChange(currentPage + 1)">
+        <button
+          class="relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 text-gray-700 hover:bg-gray-50"
+          [disabled]="currentPage === contests.meta.totalPages"
+          (click)="onPageChange(currentPage + 1)"
+        >
           Next
         </button>
       </div>
     </div>
   </div>
 </div>
-
