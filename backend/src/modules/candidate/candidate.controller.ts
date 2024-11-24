@@ -17,6 +17,11 @@ export class CandidateController {
    *     summary: Get candidates with pagination
    *     parameters:
    *       - in: query
+   *         name: voteId
+   *         schema:
+   *           type: integer
+   *         description: Filter by vote id
+   *       - in: query
    *         name: search
    *         schema:
    *           type: string

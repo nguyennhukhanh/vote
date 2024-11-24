@@ -46,7 +46,15 @@ export class CandidateService {
   async getCandidatesWithPagination<T>(
     query: CandidateQuery,
   ): Promise<PaginatedResult<T>> {
-    const { search, fromDate, toDate, sort, page = 1, limit = 10 } = query;
+    const {
+      voteId,
+      search,
+      fromDate,
+      toDate,
+      sort,
+      page = 1,
+      limit = 10,
+    } = query;
     const filters: SQL[] = [];
 
     const queryBuilder = db
@@ -69,6 +77,7 @@ export class CandidateService {
       .from(candidates)
       .innerJoin(contests, eq(candidates.voteId, contests.voteId));
 
+    if (voteId) filters.push(eq(candidates.voteId, voteId));
     if (search) {
       filters.push(or(like(candidates.name, `%${search}%`)) as SQL);
     }
