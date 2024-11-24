@@ -1,0 +1,204 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Enhanced Header with Vote Info -->
+    <div class="mb-8 flex justify-between items-end">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Contest Candidates</h1>
+        <p class="mt-2 text-sm text-gray-600">
+          Choose your candidate wisely - your vote matters!
+        </p>
+      </div>
+      <div class="text-right">
+        <span class="text-2xl font-bold text-blue-600">{{
+          candidates.meta.totalItems || 0
+        }}</span>
+        <p class="text-sm text-gray-600">Total Candidates</p>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-white shadow-sm rounded-lg mb-6 p-4">
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="search"
+          class="w-full pl-12 pr-4 py-3 border-0 rounded-lg bg-gray-50 focus:bg-white outline-none focus:ring-2 focus:ring-blue-500 text-lg transition-all duration-300"
+          placeholder="Search candidates by name..."
+        />
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center">
+          <svg
+            class="h-6 w-6 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+        <div
+          class="absolute inset-y-0 right-0 flex items-center pr-4 space-x-2"
+        >
+          <button
+            (click)="onSearch()"
+            class="text-blue-600 hover:text-blue-800"
+          >
+            Search
+          </button>
+          <span class="text-gray-300">|</span>
+          <button
+            (click)="clearFilters()"
+            class="text-gray-400 hover:text-gray-600"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Candidates List - New Card Design -->
+    <div class="space-y-6">
+      <div
+        *ngFor="let candidate of candidates.items"
+        class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+      >
+        <div class="grid grid-cols-12 h-full">
+          <!-- Candidate Image/Avatar Section -->
+          <div
+            class="col-span-3 bg-gradient-to-br from-blue-500 to-purple-600 p-6 flex items-center justify-center"
+          >
+            <div
+              class="w-32 h-32 rounded-full bg-white/90 flex items-center justify-center"
+            >
+              <span class="text-4xl font-bold text-blue-600">
+                {{ candidate.name.charAt(0).toUpperCase() }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Candidate Information Section -->
+          <div class="col-span-6 p-6">
+            <div class="mb-4">
+              <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                {{ candidate.name }}
+              </h2>
+              <p class="text-gray-600">
+                {{ candidate.description || 'No description available' }}
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center text-gray-600">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span>Created: {{ formatDate(candidate.createdAt) }}</span>
+              </div>
+              <div class="flex items-center text-gray-600">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+                <a
+                  [href]="bscScanUrl + candidate.transactionHash"
+                  target="_blank"
+                  class="text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  View Transaction
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vote Action Section -->
+          <div
+            class="col-span-3 border-l border-gray-100 p-6 flex flex-col justify-between"
+          >
+            <div class="text-center">
+              <div class="text-3xl font-bold text-blue-600 mb-2">
+                {{ candidate.voteCount || 0 }}
+              </div>
+              <div class="text-sm text-gray-600">Total Votes</div>
+            </div>
+            <button
+              class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
+            >
+              Cast Your Vote
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"
+      ></div>
+    </div>
+
+    <!-- Enhanced Pagination -->
+    <div
+      class="mt-8 bg-white rounded-lg shadow-sm p-4"
+      *ngIf="candidates.meta && !isLoading"
+    >
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-sm text-gray-700">
+          Showing
+          <span class="font-medium">{{
+            (currentPage - 1) * itemsPerPage + 1
+          }}</span>
+          to
+          <span class="font-medium">{{
+            Math.min(currentPage * itemsPerPage, candidates.meta.totalItems)
+          }}</span>
+          of
+          <span class="font-medium">{{ candidates.meta.totalItems }}</span>
+          candidates
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            *ngFor="
+              let page of [].constructor(candidates.meta.totalPages);
+              let i = index
+            "
+            class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-300"
+            [ngClass]="
+              currentPage === i + 1
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+            "
+            (click)="onPageChange(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

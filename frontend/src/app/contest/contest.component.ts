@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import type { OnInit } from '@angular/core';
 import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { ContestApiEnum } from '../../common/enums/api.enum';
@@ -26,12 +27,13 @@ export class ContestComponent implements OnInit {
   sort: string = 'DESC';
   currentPage: number = 1;
   itemsPerPage: number = 10;
-  bscScanUrl: string = 'https://testnet.bscscan.com/tx/';
+  bscScanUrl: string = environment.bscScanUrl;
   protected readonly Math = Math;
 
   constructor(
     @Inject(HttpClient) private http: HttpClient,
     @Inject(StoreService) private storeService: StoreService,
+    @Inject(Router) private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -60,7 +62,7 @@ export class ContestComponent implements OnInit {
 
       const response = await firstValueFrom(
         this.http.get<IResponse>(
-          `${environment.apiUrl}${ContestApiEnum.GET_ALL}?${queryParams}`,
+          `${environment.apiUrl}${ContestApiEnum.PREFIX}?${queryParams}`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           },
@@ -146,5 +148,9 @@ export class ContestComponent implements OnInit {
       return `${days} days remaining`;
     }
     return 'Contest ended';
+  }
+
+  viewCandidates(voteId: number): void {
+    this.router.navigate([`/contest/${voteId}/candidate`]);
   }
 }

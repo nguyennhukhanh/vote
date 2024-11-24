@@ -14,5 +14,9 @@ export enum AuthApiEnum {
 export enum UserApiEnum {}
 
 export enum ContestApiEnum {
-  GET_ALL = '/contest',
+  PREFIX = '/contest',
+}
+
+export enum CandidateApiEnum {
+  PREFIX = '/candidate',
 }
