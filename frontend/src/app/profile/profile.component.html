@@ -1,104 +1,154 @@
-<div class="container mx-auto px-4 py-8">
-  @if (isLoading) {
-    <div class="flex justify-center items-center h-64">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
-  } @else if (profile) {
-    <div class="max-w-4xl mx-auto">
-      <div class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-8">
-        <!-- Avatar -->
-        <div class="w-32 h-32 md:w-40 md:h-40">
+<div class="min-h-screen bg-gray-50/50">
+  <!-- Cover Photo Area -->
+  <div class="relative">
+    <div
+      class="bg-gradient-to-r from-orange-200 to-red-400 h-64 transition-all duration-300 hover:brightness-105"
+    ></div>
+    <button
+      (click)="router.navigate(['/'])"
+      class="absolute top-6 left-6 p-3 bg-white rounded-full text-gray-700 shadow-lg hover:scale-105 transition-all duration-200"
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 19l-7-7m0 0l7-7m-7 7h18"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-28">
+    <!-- Profile Card -->
+    <div
+      class="bg-white rounded-2xl shadow-xl p-8 mb-8 transform transition-all duration-300 hover:shadow-2xl"
+    >
+      <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
+        <!-- Avatar Section -->
+        <div class="relative group">
           <img
-            [src]="defaultAvatar"
-            [alt]="profile.id.toString()"
-            class="rounded-full w-full h-full object-cover border-2 border-gray-200"
+            [src]="profile?.avatarUrl || defaultAvatar"
+            [alt]="profile?.fullName"
+            class="w-36 h-36 md:w-48 md:h-48 rounded-full border-4 border-white shadow-lg object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          <button
+            class="absolute bottom-2 right-2 p-3 bg-gradient-to-r from-red-500 to-orange-400 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:from-red-600 hover:to-orange-500"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+              />
+            </svg>
+          </button>
         </div>
 
         <!-- Profile Info -->
-        <div class="flex-1">
-          <div class="flex flex-col md:flex-row items-center md:items-start gap-4 mb-4">
-            <h1 class="text-2xl font-semibold">User #{{profile.id}}</h1>
-            <button class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-              Edit Profile
-            </button>
+        <div class="flex-1 text-center md:text-left space-y-6">
+          <div
+            class="flex flex-col md:flex-row items-center justify-between gap-6"
+          >
+            <div class="space-y-2">
+              <h1 class="text-4xl font-bold text-gray-900 tracking-tight">
+                {{ profile?.fullName || 'Anonymous' }}
+              </h1>
+              <p class="text-lg text-gray-600">{{ profile?.email }}</p>
+              <p class="text-sm text-gray-500">
+                Member since {{ profile?.createdAt | date: 'MMMM d, yyyy' }}
+              </p>
+            </div>
+            <div class="flex gap-4">
+              <button
+                class="px-8 py-3 bg-gradient-to-r from-red-500 to-orange-400 text-white rounded-lg font-medium transform transition-all duration-200 hover:translate-y-[-2px] hover:shadow-lg active:translate-y-0"
+              >
+                Edit Profile
+              </button>
+              <button
+                class="px-8 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium transform transition-all duration-200 hover:bg-gray-200 hover:translate-y-[-2px] active:translate-y-0"
+              >
+                Share
+              </button>
+            </div>
           </div>
 
-          <!-- User Info -->
-          <div class="text-center md:text-left">
-            @if (profile.fullName) {
-              <h2 class="font-semibold mb-2">{{profile.fullName}}</h2>
-            }
-            @if (profile.email) {
-              <p class="text-gray-600">{{profile.email}}</p>
-            }
-            <p class="text-gray-500 text-sm mt-2">
-              Joined: {{profile.createdAt | date:'mediumDate'}}
-            </p>
+          <!-- Stats -->
+          <div
+            class="grid grid-cols-3 gap-8 mt-8 border-t border-gray-100 pt-8"
+          >
+            <div
+              class="text-center transform transition-all duration-200 hover:scale-105"
+            >
+              <div
+                class="text-3xl font-bold bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent"
+              >
+                {{ totalVotes || 0 }}
+              </div>
+              <div class="text-sm font-medium text-gray-600 mt-1">
+                Votes Cast
+              </div>
+            </div>
+            <div
+              class="text-center transform transition-all duration-200 hover:scale-105"
+            >
+              <div
+                class="text-3xl font-bold bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent"
+              >
+                {{ totalContests || 0 }}
+              </div>
+              <div class="text-sm font-medium text-gray-600 mt-1">
+                Contests Joined
+              </div>
+            </div>
+            <div
+              class="text-center transform transition-all duration-200 hover:scale-105"
+            >
+              <div
+                class="text-3xl font-bold bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent"
+              >
+                {{ totalCreated || 0 }}
+              </div>
+              <div class="text-sm font-medium text-gray-600 mt-1">Created</div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Activities Section -->
+    <!-- Activity Tabs -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+      <div class="border-b border-gray-200">
+        <nav class="flex gap-10">
+          <button
+            *ngFor="let tab of ['Votes', 'Created Contests', 'Activity']"
+            class="py-4 px-2 text-base font-medium border-b-2 -mb-px transition-all duration-200"
+            [ngClass]="
+              activeTab === tab
+                ? 'text-red-500 border-red-500'
+                : 'text-gray-500 border-transparent hover:text-red-500 hover:border-red-300'
+            "
+            (click)="activeTab = tab"
+          >
+            {{ tab }}
+          </button>
+        </nav>
+      </div>
+
       <div class="mt-8">
-        <h2 class="text-xl font-semibold mb-4">Recent Activities</h2>
-        <div class="space-y-4">
-          <!-- Activity 1 -->
-          <div class="bg-white p-4 rounded-lg shadow">
-            <div class="flex items-center gap-3 mb-2">
-              <img [src]="defaultAvatar" class="w-8 h-8 rounded-full">
-              <div>
-                <span class="font-medium">Created a vote</span>
-                <span class="text-gray-500 text-sm ml-2">2 hours ago</span>
-              </div>
-            </div>
-            <div class="pl-11">
-              <h3 class="font-medium">Which programming language is better?</h3>
-              <div class="mt-2 text-sm text-gray-600">
-                Options: JavaScript, Python, Java
-              </div>
-            </div>
-          </div>
-
-          <!-- Activity 2 -->
-          <div class="bg-white p-4 rounded-lg shadow">
-            <div class="flex items-center gap-3 mb-2">
-              <img [src]="defaultAvatar" class="w-8 h-8 rounded-full">
-              <div>
-                <span class="font-medium">Voted on</span>
-                <span class="text-gray-500 text-sm ml-2">5 hours ago</span>
-              </div>
-            </div>
-            <div class="pl-11">
-              <h3 class="font-medium">What's your favorite text editor?</h3>
-              <div class="mt-2 text-sm text-gray-600">
-                Voted: VS Code
-              </div>
-            </div>
-          </div>
-
-          <!-- Activity 3 -->
-          <div class="bg-white p-4 rounded-lg shadow">
-            <div class="flex items-center gap-3 mb-2">
-              <img [src]="defaultAvatar" class="w-8 h-8 rounded-full">
-              <div>
-                <span class="font-medium">Commented on</span>
-                <span class="text-gray-500 text-sm ml-2">1 day ago</span>
-              </div>
-            </div>
-            <div class="pl-11">
-              <h3 class="font-medium">Best Frontend Framework 2024</h3>
-              <div class="mt-2 text-sm text-gray-600">
-                "Angular is definitely the most robust option for enterprise applications"
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- ...existing activity content... -->
       </div>
     </div>
-  } @else {
-    <div class="text-center text-gray-500">
-      Failed to load profile
-    </div>
-  }
+  </div>
 </div>

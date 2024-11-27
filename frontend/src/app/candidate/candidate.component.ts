@@ -15,13 +15,14 @@ import type { IResponse } from '../../common/interfaces/response.interface';
 import type { IVoter } from '../../common/interfaces/voter.interface';
 import { formatDate } from '../../common/utils/time.util';
 import { environment } from '../../environments/environment.development';
+import { NavbarComponent } from '../navbar/navbar.component';
 import { ContractService } from '../services/contract.service';
 import { StoreService } from '../services/store.service';
 
 @Component({
   selector: 'app-candidate',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarComponent],
   templateUrl: './candidate.component.html',
   styleUrl: './candidate.component.sass',
 })

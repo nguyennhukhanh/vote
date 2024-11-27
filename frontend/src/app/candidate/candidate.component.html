@@ -1,117 +1,153 @@
-<div class="min-h-screen bg-gray-50 py-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Enhanced Header with Vote Info -->
-    <div class="mb-8 flex justify-between items-end">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900">Contest Candidates</h1>
-        <p class="mt-2 text-sm text-gray-600">
+<app-navbar></app-navbar>
+<div class="min-h-screen container mx-auto px-4">
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Header Section -->
+      <div class="mb-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">
+          Contest Candidates
+        </h1>
+        <p class="text-lg text-gray-600">
           Choose your candidate wisely - your vote matters!
         </p>
       </div>
-      <div class="text-right">
-        <span class="text-2xl font-bold text-blue-600">{{
-          candidates.meta.totalItems || 0
-        }}</span>
-        <p class="text-sm text-gray-600">Total Candidates</p>
-      </div>
-    </div>
 
-    <!-- Search Bar -->
-    <div class="bg-white shadow-sm rounded-lg mb-6 p-4">
-      <div class="relative">
-        <input
-          type="text"
-          [(ngModel)]="search"
-          class="w-full pl-12 pr-4 py-3 border-0 rounded-lg bg-gray-50 focus:bg-white outline-none focus:ring-2 focus:ring-blue-500 text-lg transition-all duration-300"
-          placeholder="Search candidates by name..."
-        />
-        <div class="absolute inset-y-0 left-0 pl-4 flex items-center">
-          <svg
-            class="h-6 w-6 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Enhanced Search Bar -->
+        <div class="bg-white shadow-lg rounded-xl mb-8 p-4 sm:p-6">
+          <div class="relative flex flex-col sm:block">
+            <input
+              type="text"
+              [(ngModel)]="search"
+              class="w-full pl-12 pr-4 py-3 border-0 rounded-lg bg-gray-50 focus:bg-white outline-none focus:ring-2 focus:ring-red-400 text-lg transition-all duration-300 mb-4 sm:mb-0"
+              placeholder="Search candidates by name..."
             />
-          </svg>
-        </div>
-        <div
-          class="absolute inset-y-0 right-0 flex items-center pr-4 space-x-2"
-        >
-          <button
-            (click)="onSearch()"
-            class="text-blue-600 hover:text-blue-800"
-          >
-            Search
-          </button>
-          <span class="text-gray-300">|</span>
-          <button
-            (click)="clearFilters()"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            Clear
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Candidates List - New Card Design -->
-    <div class="space-y-6">
-      <div
-        *ngFor="let candidate of candidates.items"
-        class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
-      >
-        <div class="grid grid-cols-12 h-full">
-          <!-- Candidate Image/Avatar Section -->
-          <div
-            class="col-span-3 bg-gradient-to-br from-blue-500 to-purple-600 p-6 flex items-center justify-center"
-          >
+            <div class="absolute top-0 left-0 pl-4 flex items-center h-[52px]">
+              <svg
+                class="h-6 w-6 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
             <div
-              class="w-32 h-32 rounded-full bg-white/90 flex items-center justify-center"
+              class="flex justify-center sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center pr-4 space-x-2"
             >
-              <span class="text-4xl font-bold text-blue-600">
-                {{ candidate.name.charAt(0).toUpperCase() }}
-              </span>
+              <button
+                (click)="onSearch()"
+                class="text-red-500 hover:text-red-600 font-medium transition-colors duration-200"
+              >
+                Search
+              </button>
+              <span class="text-gray-300 hidden sm:inline">|</span>
+              <button
+                (click)="clearFilters()"
+                class="text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200"
+              >
+                Clear
+              </button>
             </div>
           </div>
+        </div>
 
-          <!-- Candidate Information Section -->
-          <div class="col-span-6 p-6">
-            <div class="mb-4">
-              <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                {{ candidate.name }}
-              </h2>
-              <p class="text-gray-600">
-                {{ candidate?.description || 'No description available' }}
-              </p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 text-sm">
-              <div class="flex items-center text-gray-600">
-                <svg
-                  class="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+        <!-- Candidates Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div
+            *ngFor="let candidate of candidates.items"
+            class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden hover:translate-y-[-4px]"
+          >
+            <!-- Candidate Header with improved gradient -->
+            <div
+              class="bg-gradient-to-r from-orange-400 to-red-400 p-8 text-white relative overflow-hidden"
+            >
+              <div
+                class="absolute top-0 right-0 w-32 h-32 transform translate-x-16 -translate-y-8 opacity-10"
+              >
+                <svg fill="currentColor" viewBox="0 0 24 24">
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                <span>Created: {{ formatDate(candidate.createdAt) }}</span>
               </div>
-              <div class="flex items-center text-gray-600">
+              <div
+                class="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center text-3xl font-bold"
+              >
+                {{ candidate.name.charAt(0).toUpperCase() }}
+              </div>
+              <h2 class="text-xl font-bold text-center">
+                {{ candidate.name }}
+              </h2>
+            </div>
+
+            <!-- Candidate Info -->
+            <div class="p-6">
+              <div class="mb-4">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                  {{ candidate.name }}
+                </h2>
+                <p class="text-gray-600">
+                  {{ candidate?.description || 'No description available' }}
+                </p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="flex items-center text-gray-600">
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span>Created: {{ formatDate(candidate.createdAt) }}</span>
+                </div>
+                <div class="flex items-center text-gray-600">
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                  <a
+                    [href]="bscScanUrl + 'tx/' + candidate.transactionHash"
+                    target="_blank"
+                    class="text-red-500 hover:text-red-600 font-medium hover:underline transition-colors duration-200"
+                  >
+                    View Transaction
+                  </a>
+                </div>
+              </div>
+
+              <!-- Vote Button with improved interaction -->
+              <button
+                (click)="openVoteModal(candidate)"
+                [disabled]="!canVote()"
+                class="w-full mt-6 bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 flex items-center justify-center space-x-2"
+              >
+                <span>Cast Your Vote</span>
                 <svg
-                  class="w-5 h-5 mr-2"
+                  class="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -123,319 +159,285 @@
                     d="M13 10V3L4 14h7v7l9-11h-7z"
                   />
                 </svg>
-                <a
-                  [href]="bscScanUrl + 'tx/' + candidate.transactionHash"
-                  target="_blank"
-                  class="text-blue-600 hover:text-blue-800 hover:underline"
-                >
-                  View Transaction
-                </a>
-              </div>
+              </button>
             </div>
           </div>
+        </div>
 
-          <!-- Vote Action Section -->
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="flex justify-center items-center py-12">
           <div
-            class="col-span-3 border-l border-gray-100 p-6 flex flex-col justify-between"
-          >
-            <div class="text-center">
-              <div class="text-3xl font-bold text-blue-600 mb-2">
-                {{ candidate.totalVotes || 0 }}
-              </div>
-              <div class="text-sm text-gray-600">Total Votes</div>
-            </div>
-            <div>
-              <p
-                class="text-sm"
-                [ngClass]="{
-                  'text-gray-500': !contractError,
-                  'text-red-500': contractError,
-                }"
-              >
-                {{ getContestStatusMessage() }}
-              </p>
-              <button
-                (click)="openVoteModal(candidate)"
-                [disabled]="!canVote()"
-                class="mt-2 w-full bg-gradient-to-r from-blue-600 to-purple-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
-              >
-                <span *ngIf="isLoadingContract">Loading...</span>
-                <span *ngIf="!isLoadingContract">Cast Your Vote</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
-      <div
-        class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"
-      ></div>
-    </div>
-
-    <!-- Enhanced Pagination -->
-    <div
-      class="mt-8 bg-white rounded-lg shadow-sm p-4"
-      *ngIf="candidates.meta && !isLoading"
-    >
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="text-sm text-gray-700">
-          Showing
-          <span class="font-medium">{{
-            (currentPage - 1) * itemsPerPage + 1
-          }}</span>
-          to
-          <span class="font-medium">{{
-            Math.min(currentPage * itemsPerPage, candidates.meta.totalItems)
-          }}</span>
-          of
-          <span class="font-medium">{{ candidates.meta.totalItems }}</span>
-          candidates
+            class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-400"
+          ></div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <button
-            *ngFor="
-              let page of [].constructor(candidates.meta.totalPages);
-              let i = index
-            "
-            class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-300"
-            [ngClass]="
-              currentPage === i + 1
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
-            "
-            (click)="onPageChange(i + 1)"
-          >
-            {{ i + 1 }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Enhanced Vote Confirmation Modal -->
-<div
-  *ngIf="showVoteModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto"
->
-  <div
-    class="bg-white rounded-2xl w-full max-w-5xl shadow-xl transform transition-all my-8"
-  >
-    <!-- Modal Header -->
-    <div
-      class="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white rounded-t-2xl"
-    >
-      <div class="flex justify-between items-start">
-        <div>
-          <h3 class="text-3xl font-bold mb-2">
-            Vote for {{ selectedCandidate?.name }}
-          </h3>
-          <p class="text-lg opacity-90">{{ contestInfo?.name || 'Contest' }}</p>
-        </div>
-        <button
-          (click)="closeVoteModal()"
-          class="p-2 hover:bg-white/20 rounded-lg transition-colors"
+        <!-- Enhanced Pagination -->
+        <div
+          class="mt-8 bg-white rounded-xl shadow-lg p-6"
+          *ngIf="candidates.meta && !isLoading"
         >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <div
+            class="flex flex-col md:flex-row justify-between items-center gap-4"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Modal Content -->
-    <div class="p-8">
-      <!-- Main Content Grid -->
-      <div class="grid grid-cols-2 gap-8">
-        <!-- Left Column -->
-        <div>
-          <!-- Candidate Info Card -->
-          <div class="bg-gray-50 rounded-xl p-6">
-            <div class="flex items-center space-x-4 mb-6">
-              <div
-                class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold"
-              >
-                {{ selectedCandidate?.name.charAt(0).toUpperCase() }}
-              </div>
-              <div>
-                <h4 class="text-2xl font-bold text-gray-900">
-                  {{ selectedCandidate?.name }}
-                </h4>
-                <p class="text-gray-500">
-                  ID: #{{ selectedCandidate?.candidateId }}
-                </p>
-              </div>
+            <div class="text-sm text-gray-700">
+              Showing
+              <span class="font-medium">{{
+                (currentPage - 1) * itemsPerPage + 1
+              }}</span>
+              to
+              <span class="font-medium">{{
+                Math.min(currentPage * itemsPerPage, candidates.meta.totalItems)
+              }}</span>
+              of
+              <span class="font-medium">{{ candidates.meta.totalItems }}</span>
+              candidates
             </div>
 
-            <!-- Vote Stats -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
-              <div class="bg-white rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-blue-600">
-                  {{ selectedCandidate?.totalVotes || 0 }}
-                </div>
-                <p class="text-sm text-gray-600">Total Votes</p>
-              </div>
-              <div class="bg-white rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-purple-600">
-                  {{ voters.meta.totalItems || 0 }}
-                </div>
-                <p class="text-sm text-gray-600">Recent Votes</p>
-              </div>
-            </div>
-
-            <!-- Contest Status -->
-            <div class="border-t border-gray-200 pt-4">
-              <p class="font-medium text-gray-900 mb-2">Contest Status</p>
-              <p
-                [ngClass]="{
-                  'text-green-600': contestStatus === 2,
-                  'text-yellow-600': contestStatus === 1,
-                  'text-red-600': contestStatus === 3,
-                }"
-              >
-                {{ getContestStatusMessage() }}
-              </p>
-            </div>
-
-            <!-- Vote Action -->
-            <div class="mt-6">
+            <div class="flex items-center gap-2">
               <button
-                (click)="submitVote()"
-                [disabled]="isVoting || !canVote()"
-                class="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg font-medium rounded-lg transition-all duration-300 flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                *ngFor="
+                  let page of [].constructor(candidates.meta.totalPages);
+                  let i = index
+                "
+                class="relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-300"
+                [ngClass]="
+                  currentPage === i + 1
+                    ? 'z-10 bg-gradient-to-r from-orange-400 to-red-400 text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                "
+                (click)="onPageChange(i + 1)"
               >
-                <span
-                  *ngIf="isVoting"
-                  class="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"
-                ></span>
-                <span>{{
-                  isVoting
-                    ? 'Confirming Vote...'
-                    : 'Confirm Vote for ' + selectedCandidate?.name
-                }}</span>
+                {{ i + 1 }}
               </button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Right Column - Voters List -->
-        <div class="bg-gray-50 rounded-xl p-6">
-          <div class="flex items-center justify-between mb-6">
-            <h4 class="text-xl font-bold text-gray-900">Recent Voters</h4>
-            <span
-              class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-            >
-              Total: {{ voters.meta.totalItems || 0 }}
-            </span>
-          </div>
-
-          <!-- Voters Content -->
-          <div class="h-[500px] overflow-y-auto pr-2">
-            <!-- Loading State -->
-            <div *ngIf="isLoadingVoters" class="flex justify-center py-8">
-              <div
-                class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"
-              ></div>
+    <!-- Vote Modal -->
+    <div
+      *ngIf="showVoteModal"
+      class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white rounded-xl w-full max-w-5xl shadow-2xl transform transition-all"
+      >
+        <!-- Modal Header -->
+        <div
+          class="bg-gradient-to-r from-orange-400 to-red-400 p-8 rounded-t-xl text-white"
+        >
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-3xl font-bold mb-2">
+                Vote for {{ selectedCandidate?.name }}
+              </h3>
+              <p class="text-lg opacity-90">
+                {{ contestInfo?.name || 'Contest' }}
+              </p>
             </div>
-
-            <!-- Empty State -->
-            <div
-              *ngIf="!isLoadingVoters && !voters.items?.length"
-              class="text-center py-8 bg-white rounded-lg"
+            <button
+              (click)="closeVoteModal()"
+              class="p-2 hover:bg-white/20 rounded-lg transition-colors"
             >
-              <p class="text-gray-500">No votes recorded yet</p>
-            </div>
-
-            <!-- Voters List -->
-            <div
-              *ngIf="!isLoadingVoters && voters.items?.length"
-              class="space-y-3"
-            >
-              <div
-                *ngFor="let vote of voters.items"
-                class="bg-white rounded-lg p-4 hover:shadow-md transition-shadow"
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <div class="flex justify-between items-start">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="p-8">
+          <!-- Main Content Grid -->
+          <div class="grid grid-cols-2 gap-8">
+            <!-- Left Column -->
+            <div>
+              <!-- Candidate Info Card -->
+              <div class="bg-gray-50 rounded-xl p-6">
+                <div class="flex items-center space-x-4 mb-6">
+                  <div
+                    class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold"
+                  >
+                    {{ selectedCandidate?.name.charAt(0).toUpperCase() }}
+                  </div>
                   <div>
-                    <div class="flex items-center gap-2">
-                      <p class="font-medium text-gray-900">
-                        {{ vote.voter.walletAddress | slice: 0 : 6 }}...{{
-                          vote.voter.walletAddress | slice: -4
-                        }}
-                      </p>
-                      <span
-                        class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full"
-                      >
-                        Block #{{ vote.blockNumber }}
-                      </span>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">
-                      {{ formatDate(vote.blockTimestamp) }}
+                    <h4 class="text-2xl font-bold text-gray-900">
+                      {{ selectedCandidate?.name }}
+                    </h4>
+                    <p class="text-gray-500">
+                      ID: #{{ selectedCandidate?.candidateId }}
                     </p>
                   </div>
-                  <div class="flex space-x-2">
-                    <a
-                      [href]="bscScanUrl + 'tx/' + vote.transactionHash"
-                      target="_blank"
-                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="View Transaction"
-                    >
-                      <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
-                    </a>
-                    <a
-                      [href]="
-                        bscScanUrl + 'address/' + vote.voter.walletAddress
-                      "
-                      target="_blank"
-                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="View Address"
-                    >
-                      <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15 9a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                    </a>
+                </div>
+
+                <!-- Vote Stats -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                  <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-blue-600">
+                      {{ selectedCandidate?.totalVotes || 0 }}
+                    </div>
+                    <p class="text-sm text-gray-600">Total Votes</p>
+                  </div>
+                  <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-purple-600">
+                      {{ voters.meta.totalItems || 0 }}
+                    </div>
+                    <p class="text-sm text-gray-600">Recent Votes</p>
+                  </div>
+                </div>
+
+                <!-- Contest Status -->
+                <div class="border-t border-gray-200 pt-4">
+                  <p class="font-medium text-gray-900 mb-2">Contest Status</p>
+                  <p
+                    [ngClass]="{
+                      'text-green-600': contestStatus === 2,
+                      'text-yellow-600': contestStatus === 1,
+                      'text-red-600': contestStatus === 3,
+                    }"
+                  >
+                    {{ getContestStatusMessage() }}
+                  </p>
+                </div>
+
+                <!-- Vote Action -->
+                <div class="mt-6">
+                  <button
+                    (click)="submitVote()"
+                    [disabled]="isVoting || !canVote()"
+                    class="w-full py-4 px-6 bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 text-white text-lg font-medium rounded-lg transition-all duration-300"
+                  >
+                    <span
+                      *ngIf="isVoting"
+                      class="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                    ></span>
+                    <span>{{
+                      isVoting
+                        ? 'Confirming Vote...'
+                        : 'Confirm Vote for ' + selectedCandidate?.name
+                    }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column - Voters List -->
+            <div class="bg-gray-50 rounded-xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <h4 class="text-xl font-bold text-gray-900">Recent Voters</h4>
+                <span
+                  class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                >
+                  Total: {{ voters.meta.totalItems || 0 }}
+                </span>
+              </div>
+
+              <!-- Voters Content -->
+              <div class="h-[500px] overflow-y-auto pr-2">
+                <!-- Loading State -->
+                <div *ngIf="isLoadingVoters" class="flex justify-center py-8">
+                  <div
+                    class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"
+                  ></div>
+                </div>
+
+                <!-- Empty State -->
+                <div
+                  *ngIf="!isLoadingVoters && !voters.items?.length"
+                  class="text-center py-8 bg-white rounded-lg"
+                >
+                  <p class="text-gray-500">No votes recorded yet</p>
+                </div>
+
+                <!-- Voters List -->
+                <div
+                  *ngIf="!isLoadingVoters && voters.items?.length"
+                  class="space-y-3"
+                >
+                  <div
+                    *ngFor="let vote of voters.items"
+                    class="bg-white rounded-lg p-4 hover:shadow-md hover:border-red-200 border border-transparent transition-all duration-200"
+                  >
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <p class="font-medium text-gray-900">
+                            {{ vote.voter.walletAddress | slice: 0 : 6 }}...{{
+                              vote.voter.walletAddress | slice: -4
+                            }}
+                          </p>
+                          <span
+                            class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full"
+                          >
+                            Block #{{ vote.blockNumber }}
+                          </span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">
+                          {{ formatDate(vote.blockTimestamp) }}
+                        </p>
+                      </div>
+                      <div class="flex space-x-2">
+                        <a
+                          [href]="bscScanUrl + 'tx/' + vote.transactionHash"
+                          target="_blank"
+                          class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="View Transaction"
+                        >
+                          <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M13 10V3L4 14h7v7l9-11h-7z"
+                            />
+                          </svg>
+                        </a>
+                        <a
+                          [href]="
+                            bscScanUrl + 'address/' + vote.voter.walletAddress
+                          "
+                          target="_blank"
+                          class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="View Address"
+                        >
+                          <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M15 9a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
