@@ -7,9 +7,3 @@ export enum ContestTimeStatus {
   ACTIVE = 'active',
   ENDED = 'ended',
 }
-
-export enum ContestStatus {
-  UPCOMING = 1,
-  ONGOING = 2,
-  ENDED = 3,
-}

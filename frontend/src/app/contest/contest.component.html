@@ -123,6 +123,7 @@
       <div
         *ngFor="let contest of contests.items"
         class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-red-200 hover:translate-y-[-4px]"
+        [ngClass]="getStatusStyle(getContestStatus(contest)).card"
       >
         <div class="p-8">
           <!-- Status Badge -->

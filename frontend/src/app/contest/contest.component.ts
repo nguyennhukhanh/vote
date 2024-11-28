@@ -33,7 +33,7 @@ export class ContestComponent implements OnInit {
   toDate: string = '';
   sort: string = 'DESC';
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 9;
   bscScanUrl: string = environment.bscScanUrl;
   protected readonly Math = Math;
 

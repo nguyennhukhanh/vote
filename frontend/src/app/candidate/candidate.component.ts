@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { firstValueFrom } from 'rxjs';
 
-import { ContestStatus } from '../../common/enums';
+import { ContestTimeStatus } from '../../common/enums';
 import { CandidateApiEnum, VoteApiEnum } from '../../common/enums/api.enum';
 import type { IMeta } from '../../common/interfaces';
 import type { ICandidate } from '../../common/interfaces/candidate.interface';
@@ -51,7 +51,7 @@ export class CandidateComponent implements OnInit {
   selectedCandidate: any = null;
   isVoting: boolean = false;
   contestInfo: any;
-  contestStatus: ContestStatus = ContestStatus.UPCOMING;
+  contestStatus: ContestTimeStatus = ContestTimeStatus.UPCOMING;
   isLoadingContract: boolean = false;
   contractError: string | null = null;
   voters: { items: IVoter[]; meta: IMeta } = {
@@ -142,11 +142,11 @@ export class CandidateComponent implements OnInit {
       const endTime = Number(contest.endTime);
 
       if (now < startTime) {
-        this.contestStatus = ContestStatus.UPCOMING;
+        this.contestStatus = ContestTimeStatus.UPCOMING;
       } else if (now > endTime) {
-        this.contestStatus = ContestStatus.ENDED;
+        this.contestStatus = ContestTimeStatus.ENDED;
       } else {
-        this.contestStatus = ContestStatus.ONGOING;
+        this.contestStatus = ContestTimeStatus.ACTIVE;
       }
     } catch (error) {
       console.error('Error loading contest info:', error);
@@ -159,7 +159,7 @@ export class CandidateComponent implements OnInit {
 
   canVote(): boolean {
     if (this.isLoadingContract) return false;
-    return this.contestStatus === ContestStatus.ONGOING;
+    return this.contestStatus === ContestTimeStatus.ACTIVE;
   }
 
   getContestStatusMessage(): string {
@@ -167,11 +167,11 @@ export class CandidateComponent implements OnInit {
     if (this.contractError) return this.contractError;
 
     switch (this.contestStatus) {
-      case ContestStatus.UPCOMING:
+      case ContestTimeStatus.UPCOMING:
         return `Voting starts ${this.formatDate(Number(this.contestInfo?.startTime) * 1000)}`;
-      case ContestStatus.ONGOING:
+      case ContestTimeStatus.ACTIVE:
         return `Voting ends ${this.formatDate(Number(this.contestInfo?.endTime) * 1000)}`;
-      case ContestStatus.ENDED:
+      case ContestTimeStatus.ENDED:
         return 'Voting has ended';
       default:
         return '';
