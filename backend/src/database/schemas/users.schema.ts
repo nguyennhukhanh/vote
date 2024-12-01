@@ -15,6 +15,7 @@ export const users = mysqlTable(
     fullName: varchar({ length: 100 }),
     walletAddress: varchar({ length: 100 }).unique(),
     nonce: int().default(0),
+    avatarUrl: varchar({ length: 255 }),
     isActive: boolean().notNull().default(true),
     createdAt: timestamp({ mode: 'date' })
       .notNull()

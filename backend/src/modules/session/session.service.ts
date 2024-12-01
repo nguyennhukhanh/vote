@@ -60,6 +60,8 @@ export class SessionService {
         id: users.id,
         email: users.email,
         fullName: users.fullName,
+        walletAddress: users.walletAddress,
+        avatarUrl: users.avatarUrl,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       })

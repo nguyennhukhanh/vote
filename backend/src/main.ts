@@ -72,8 +72,8 @@ export function startServer() {
     reusePort: true, // Enable cluster mode
     staticDirectories: [
       {
-        path: '/images', // example: http://host:port/images/your-image.jpeg
-        directory: 'public/images',
+        path: '/images/avatars', // example: http://host:port/images/your-image.jpeg
+        directory: 'public/images/avatars',
       },
       {
         path: '/assets',
