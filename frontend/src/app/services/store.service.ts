@@ -8,6 +8,7 @@ import { AuthApiEnum, GroupApiEnum } from '../../common/enums/api.enum';
 import type { IResponse } from '../../common/interfaces/response.interface';
 import type { TokensType } from '../../common/types';
 import { environment } from '../../environments/environment.development';
+import { WalletService } from './wallet.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class StoreService {
     @Inject(Router) public router: Router,
     @Inject(HttpClient)
     private http: HttpClient,
+    @Inject(WalletService) private walletService: WalletService,
   ) {}
 
   saveTokens(tokens: object, shouldNavigate: boolean = false) {
@@ -77,6 +79,7 @@ export class StoreService {
         ),
       );
       if (response?.data?.isLogout) {
+        await this.walletService.disconnect();
         localStorage.removeItem('tokens');
         this.router.navigate(['/auth']);
       }

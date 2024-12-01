@@ -49,4 +49,14 @@ export class WalletService {
       params: [message, walletAddress],
     });
   }
+
+  async disconnect(): Promise<void> {
+    try {
+      if (this.ethereum && this.ethereum.disconnect) {
+        await this.ethereum.disconnect();
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }
