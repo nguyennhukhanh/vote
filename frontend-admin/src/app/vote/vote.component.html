@@ -1,0 +1,169 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Vote Management</h1>
+      <p class="mt-2 text-gray-600">
+        View and manage votes across all contests
+      </p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <select
+          [(ngModel)]="selectedContest"
+          (ngModelChange)="onContestChange()"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option [ngValue]="null">Select Contest</option>
+          <option *ngFor="let contest of contests" [ngValue]="contest">
+            {{ contest.name }}
+          </option>
+        </select>
+
+        <select
+          [(ngModel)]="selectedCandidate"
+          (ngModelChange)="onSearch()"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option [ngValue]="null">Select Candidate</option>
+          <option *ngFor="let candidate of candidates" [ngValue]="candidate">
+            {{ candidate.name }}
+          </option>
+        </select>
+
+        <input
+          type="text"
+          [(ngModel)]="search"
+          placeholder="Search..."
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <input
+          type="date"
+          [(ngModel)]="fromDate"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <input
+          type="date"
+          [(ngModel)]="toDate"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <div class="flex gap-2">
+          <button
+            (click)="onSearch()"
+            class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg flex-1"
+          >
+            Search
+          </button>
+          <button
+            (click)="clearFilters()"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Votes Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- Loading Indicator -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div
+          class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+        ></div>
+      </div>
+
+      <!-- Empty State -->
+      <div
+        *ngIf="!isLoading && votes.items.length === 0"
+        class="text-center py-8"
+      >
+        <p class="text-gray-500">No votes found</p>
+      </div>
+
+      <!-- Votes Table -->
+      <table
+        *ngIf="!isLoading && votes.items.length > 0"
+        class="min-w-full divide-y divide-gray-200"
+      >
+        <thead class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white">
+          <tr>
+            <th class="px-6 py-4 text-left">Contest</th>
+            <th class="px-6 py-4 text-left">Candidate</th>
+            <th class="px-6 py-4 text-left">Voter</th>
+            <th class="px-6 py-4 text-left">Wallet Address</th>
+            <th class="px-6 py-4 text-left">Transaction Hash</th>
+            <th class="px-6 py-4 text-left">Timestamp</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr *ngFor="let vote of votes.items" class="hover:bg-gray-50">
+            <td class="px-6 py-4">{{ vote.contest.name }}</td>
+            <td class="px-6 py-4">{{ vote.candidate.name }}</td>
+            <td class="px-6 py-4">{{ vote.voter.fullName }}</td>
+            <td class="px-6 py-4 font-mono text-sm">
+              {{ vote.voter.walletAddress }}
+            </td>
+            <td class="px-6 py-4">
+              <a
+                [href]="bscScanUrl + '/tx/' + vote.transactionHash"
+                target="_blank"
+                class="text-blue-600 hover:text-blue-800 hover:underline break-all font-mono text-sm p-2 rounded block"
+              >
+                {{ vote.transactionHash }}
+              </a>
+            </td>
+            <td class="px-6 py-4">{{ formatDate(vote.blockTimestamp) }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div
+        class="px-6 py-4 flex items-center justify-between border-t border-gray-200"
+      >
+        <div class="text-sm text-gray-700">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
+          {{ Math.min(currentPage * itemsPerPage, votes.meta.totalItems) }} of
+          {{ votes.meta.totalItems }} results
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            [disabled]="currentPage === 1"
+            (click)="onPageChange(currentPage - 1)"
+            class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+
+          <div class="flex gap-2">
+            <button
+              *ngFor="let page of getPageNumbers()"
+              [class]="
+                currentPage === page
+                  ? 'bg-blue-500 text-white px-4 py-2 rounded-lg'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg'
+              "
+              (click)="onPageChange(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+
+          <button
+            [disabled]="currentPage === votes.meta.totalPages"
+            (click)="onPageChange(currentPage + 1)"
+            class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

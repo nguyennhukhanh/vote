@@ -110,6 +110,18 @@
 
         <div class="flex gap-2">
           <button
+            [disabled]="currentPage === 1"
+            (click)="onPageChange(currentPage - 1)"
+            [class]="
+              currentPage === 1
+                ? 'bg-gray-100 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg'
+            "
+          >
+            Previous
+          </button>
+
+          <button
             *ngFor="
               let page of [].constructor(candidates.meta.totalPages);
               let i = index
@@ -122,6 +134,18 @@
             (click)="onPageChange(i + 1)"
           >
             {{ i + 1 }}
+          </button>
+
+          <button
+            [disabled]="currentPage === candidates.meta.totalPages"
+            (click)="onPageChange(currentPage + 1)"
+            [class]="
+              currentPage === candidates.meta.totalPages
+                ? 'bg-gray-100 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg'
+            "
+          >
+            Next
           </button>
         </div>
       </div>

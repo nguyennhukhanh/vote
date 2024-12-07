@@ -21,6 +21,14 @@ export class VoteController {
    *           type: string
    *         description: Search by vote name
    *       - in: query
+   *         name: voteId
+   *         schema:
+   *           type: integer
+   *       - in: query
+   *         name: candidateId
+   *         schema:
+   *           type: integer
+   *       - in: query
    *         name: fromDate
    *         schema:
    *           type: string

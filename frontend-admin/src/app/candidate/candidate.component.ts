@@ -156,7 +156,7 @@ export class CandidateComponent implements OnInit {
       const contest = {
         startTime: '1632412800',
         endTime: '1632499200',
-      }; // await this.contractService.getContest(this.voteId);
+      };
       if (!contest) {
         throw new Error('Contest not found');
       }
