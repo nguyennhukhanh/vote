@@ -2,7 +2,10 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import type { OnInit } from '@angular/core';
 import { Component, Inject } from '@angular/core';
+import type { FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
@@ -11,22 +14,26 @@ import { ContestApiEnum } from '../../common/enums/api.enum';
 import type { IResponse } from '../../common/interfaces/response.interface';
 import {
   formatDate,
-  getContestStatusStyle,
   getContestTimeStatus,
   getTimeRemaining,
 } from '../../common/utils/time.util';
 import { environment } from '../../environments/environment.development';
+import type { ICreateContest } from '../interfaces/contest.interface';
+import type {
+  IContest,
+  IPaginatedResponse,
+} from '../interfaces/contest.interface';
 import { StoreService } from '../services/store.service';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './contest.component.html',
   styleUrl: './contest.component.sass',
 })
 export class ContestComponent implements OnInit {
-  contests: any = { items: [], meta: {} };
+  contests: IPaginatedResponse<IContest> = { items: [], meta: {} as any };
   isLoading: boolean = true;
   search: string = '';
   fromDate: string = '';
@@ -36,12 +43,25 @@ export class ContestComponent implements OnInit {
   itemsPerPage: number = 6;
   bscScanUrl: string = environment.bscScanUrl;
   protected readonly Math = Math;
+  showCreateModal: boolean = false;
+  createForm: FormGroup;
 
   constructor(
     @Inject(HttpClient) private http: HttpClient,
     @Inject(StoreService) private storeService: StoreService,
     @Inject(Router) private router: Router,
-  ) {}
+    @Inject(FormBuilder)
+    private fb: FormBuilder,
+  ) {
+    this.createForm = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.minLength(3)]],
+        startTime: ['', Validators.required],
+        endTime: ['', Validators.required],
+      },
+      { validators: this.dateValidator },
+    );
+  }
 
   ngOnInit(): void {
     this.loadContests();
@@ -109,7 +129,28 @@ export class ContestComponent implements OnInit {
   }
 
   getStatusStyle(status: ContestTimeStatus) {
-    return getContestStatusStyle(status);
+    switch (status) {
+      case ContestTimeStatus.UPCOMING:
+        return {
+          badge: 'bg-blue-100 text-blue-800',
+          card: 'border-l-4 border-blue-400',
+        };
+      case ContestTimeStatus.ACTIVE:
+        return {
+          badge: 'bg-green-100 text-green-800',
+          card: 'border-l-4 border-green-400',
+        };
+      case ContestTimeStatus.ENDED:
+        return {
+          badge: 'bg-gray-100 text-gray-800',
+          card: 'border-l-4 border-gray-400',
+        };
+      default:
+        return {
+          badge: 'bg-gray-100 text-gray-800',
+          card: '',
+        };
+    }
   }
 
   getTimeRemaining(contest: any): string {
@@ -126,5 +167,69 @@ export class ContestComponent implements OnInit {
 
   viewCandidates(voteId: number): void {
     this.router.navigate([`/contest/${voteId}/candidate`]);
+  }
+
+  dateValidator(group: FormGroup) {
+    const start = new Date(group.get('startTime')?.value);
+    const end = new Date(group.get('endTime')?.value);
+    const now = new Date();
+
+    if (start < now) {
+      return { pastStartDate: true };
+    }
+    if (end <= start) {
+      return { endBeforeStart: true };
+    }
+    return null;
+  }
+
+  toggleCreateModal() {
+    this.showCreateModal = !this.showCreateModal;
+    if (!this.showCreateModal) {
+      this.createForm.reset();
+    }
+  }
+
+  async createContest() {
+    if (this.createForm.invalid) return;
+
+    try {
+      const accessToken = this.storeService.getTokens().accessToken;
+      const contestData: ICreateContest = this.createForm.value;
+
+      await firstValueFrom(
+        this.http.post<IResponse>(
+          `${environment.apiUrl}${ContestApiEnum.PREFIX}`,
+          contestData,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        ),
+      );
+
+      this.toggleCreateModal();
+      await this.loadContests();
+    } catch (error) {
+      console.error('Error creating contest:', error);
+    }
+  }
+
+  get contestStats() {
+    const total = this.contests.meta.totalItems || 0;
+    const active = this.contests.items.filter(
+      (contest) => this.getContestStatus(contest) === ContestTimeStatus.ACTIVE,
+    ).length;
+    const upcoming = this.contests.items.filter(
+      (contest) =>
+        this.getContestStatus(contest) === ContestTimeStatus.UPCOMING,
+    ).length;
+
+    return { total, active, upcoming };
+  }
+
+  getGridCols(): string {
+    return this.contests.items.length < 3
+      ? 'grid-cols-1 md:grid-cols-2'
+      : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
   }
 }

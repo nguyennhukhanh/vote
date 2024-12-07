@@ -1,0 +1,304 @@
+<app-navbar></app-navbar>
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header with Admin Actions -->
+    <div class="mb-8 flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Manage Candidates</h1>
+        <p class="mt-2 text-gray-600">
+          Administer and monitor contest candidates
+        </p>
+      </div>
+      <button
+        (click)="openCreateModal()"
+        class="bg-gradient-to-r from-blue-200 to-indigo-400 hover:from-blue-300 hover:to-indigo-500 text-white px-6 py-3 rounded-lg font-medium shadow-md transition-all duration-300"
+      >
+        Add New Candidate
+      </button>
+    </div>
+
+    <!-- Enhanced Admin Search Bar -->
+    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <input
+          type="text"
+          [(ngModel)]="search"
+          placeholder="Search by name..."
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
+        />
+        <input
+          type="date"
+          [(ngModel)]="fromDate"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
+        />
+        <input
+          type="date"
+          [(ngModel)]="toDate"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
+        />
+        <div class="flex gap-2">
+          <button
+            (click)="onSearch()"
+            class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg flex-1"
+          >
+            Search
+          </button>
+          <button
+            (click)="clearFilters()"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Candidates Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white">
+          <tr>
+            <th class="px-6 py-4 text-left">ID</th>
+            <th class="px-6 py-4 text-left">Name</th>
+            <th class="px-6 py-4 text-left">Contest</th>
+            <th class="px-6 py-4 text-left">Total Votes</th>
+            <th class="px-6 py-4 text-left">Created At</th>
+            <th class="px-6 py-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr
+            *ngFor="let candidate of candidates.items"
+            class="hover:bg-gray-50"
+          >
+            <td class="px-6 py-4">#{{ candidate.candidateId }}</td>
+            <td class="px-6 py-4 font-medium">{{ candidate.name }}</td>
+            <td class="px-6 py-4">{{ candidate.contests.name }}</td>
+            <td class="px-6 py-4">{{ candidate.totalVotes }}</td>
+            <td class="px-6 py-4">{{ formatDate(candidate.createdAt) }}</td>
+            <td class="px-6 py-4">
+              <button
+                (click)="openVoteModal(candidate)"
+                class="text-indigo-600 hover:text-indigo-900"
+              >
+                View Details
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div
+        class="px-6 py-4 flex items-center justify-between border-t border-gray-200"
+      >
+        <div class="text-sm text-gray-700">
+          Showing
+          <span class="font-medium">{{
+            (currentPage - 1) * itemsPerPage + 1
+          }}</span>
+          to
+          <span class="font-medium">
+            {{
+              Math.min(currentPage * itemsPerPage, candidates.meta.totalItems)
+            }}
+          </span>
+          of
+          <span class="font-medium">{{ candidates.meta.totalItems }}</span>
+          results
+        </div>
+
+        <div class="flex gap-2">
+          <button
+            *ngFor="
+              let page of [].constructor(candidates.meta.totalPages);
+              let i = index
+            "
+            [class]="
+              currentPage === i + 1
+                ? 'bg-blue-500 text-white px-4 py-2 rounded-lg'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg'
+            "
+            (click)="onPageChange(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Candidate Modal -->
+    <div
+      *ngIf="showCreateModal"
+      class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+    >
+      <div class="bg-white rounded-lg max-w-md w-full p-6">
+        <h3 class="text-xl font-bold mb-4">Add New Candidate</h3>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Candidate Name
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="newCandidate.name"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+            placeholder="Enter candidate name"
+          />
+        </div>
+        <div class="flex justify-end gap-3">
+          <button
+            (click)="closeCreateModal()"
+            class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            Cancel
+          </button>
+          <button
+            (click)="createCandidate()"
+            [disabled]="isCreating || !newCandidate.name"
+            class="bg-gradient-to-r from-blue-200 to-indigo-400 hover:from-blue-300 hover:to-indigo-500 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+          >
+            {{ isCreating ? 'Creating...' : 'Create Candidate' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Details Modal -->
+    <div
+      *ngIf="showVoteModal && selectedCandidate"
+      class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+      [@fadeAnimation]
+    >
+      <div
+        class="bg-white rounded-xl max-w-3xl w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out"
+        [@slideAnimation]
+      >
+        <!-- Modal Header -->
+        <div
+          class="bg-gradient-to-r from-blue-200 to-indigo-400 p-6 rounded-t-xl"
+        >
+          <div class="flex justify-between items-center">
+            <div class="text-white">
+              <h3 class="text-2xl font-bold">Candidate Details</h3>
+              <p class="text-blue-100 mt-1">
+                ID: #{{ selectedCandidate.candidateId }}
+              </p>
+            </div>
+            <button
+              (click)="closeVoteModal()"
+              class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="p-6 space-y-6">
+          <!-- Basic Info Card -->
+          <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+            <div class="grid grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <p class="text-sm font-medium text-gray-500">Name</p>
+                <p class="text-lg font-semibold text-gray-900">
+                  {{ selectedCandidate.name }}
+                </p>
+              </div>
+              <div class="space-y-1">
+                <p class="text-sm font-medium text-gray-500">Total Votes</p>
+                <p class="text-lg font-semibold text-indigo-600">
+                  {{ selectedCandidate.totalVotes }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contest Info Card -->
+          <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-900 mb-3">
+              Contest Information
+            </h4>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Contest Name</span>
+                <span class="font-medium text-gray-900">{{
+                  selectedCandidate.contests.name
+                }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Start Time</span>
+                <span class="font-medium text-gray-900">{{
+                  formatDate(selectedCandidate.contests.startTime)
+                }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">End Time</span>
+                <span class="font-medium text-gray-900">{{
+                  formatDate(selectedCandidate.contests.endTime)
+                }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blockchain Info Card -->
+          <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-900 mb-3">
+              Blockchain Details
+            </h4>
+            <div class="space-y-3">
+              <div>
+                <p class="text-sm text-gray-600 mb-1">Transaction Hash</p>
+                <a
+                  [href]="
+                    bscScanUrl + '/tx/' + selectedCandidate.transactionHash
+                  "
+                  target="_blank"
+                  class="text-blue-600 hover:text-blue-800 hover:underline break-all font-mono text-sm bg-blue-50 p-2 rounded block"
+                >
+                  {{ selectedCandidate.transactionHash }}
+                  <span class="inline-block ml-1">↗</span>
+                </a>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <p class="text-sm text-gray-600 mb-1">Block Number</p>
+                  <p class="font-mono text-gray-900">
+                    {{ selectedCandidate.blockNumber }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-600 mb-1">Block Timestamp</p>
+                  <p class="font-medium text-gray-900">
+                    {{ formatDate(selectedCandidate.blockTimestamp) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="border-t border-gray-200 p-6 flex justify-end">
+          <button
+            (click)="closeVoteModal()"
+            class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

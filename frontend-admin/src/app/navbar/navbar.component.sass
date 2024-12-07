@@ -1,0 +1,21 @@
+.mobile-nav-link
+  @apply block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200
+  &.active
+    @apply bg-blue-50 text-blue-600 font-semibold
+
+.nav-link
+  @apply flex items-center px-4 py-3 text-gray-300 relative overflow-hidden transition-all duration-200
+  &:hover
+    @apply text-white bg-gray-800 translate-x-1
+  &.nav-active
+    @apply bg-gray-800 text-white
+    &::before
+      @apply absolute left-0 top-0 h-full w-1 bg-blue-500
+      content: ''
+      animation: slideIn 0.3s ease-out
+
+@keyframes slideIn
+  from
+    transform: translateX(-100%)
+  to
+    transform: translateX(0)

@@ -1,0 +1,82 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Elements -->
+  <circle cx="400" cy="300" r="250" fill="#FFEDE5" opacity="0.3"/>
+  <circle cx="400" cy="300" r="200" fill="#FFE5D9" opacity="0.4"/>
+
+  <!-- BSC Network Elements -->
+  <g transform="translate(150, 100)">
+    <circle cx="50" cy="50" r="30" fill="#FF7E67"/>
+    <path d="M50 35L65 50L50 65L35 50L50 35Z" fill="white"/>
+  </g>
+
+  <!-- Metamask Fox (Simplified) -->
+  <g transform="translate(550, 120)">
+    <path d="M25 10L45 35L40 55L25 50L10 55L5 35L25 10Z" fill="#FF6B4A"/>
+    <path d="M15 45L25 42L35 45L25 50L15 45Z" fill="#FFA41B"/>
+    <circle cx="20" cy="35" r="2" fill="white"/>
+    <circle cx="30" cy="35" r="2" fill="white"/>
+  </g>
+
+  <!-- Ballot Box with Blockchain Style -->
+  <rect x="300" y="250" width="200" height="160" rx="15" fill="#FF7E67"/>
+  <rect x="280" y="240" width="240" height="30" rx="8" fill="#E85D54"/>
+  <rect x="370" y="180" width="60" height="70" fill="#FF7E67"/>
+
+  <!-- Ballot Slot -->
+  <rect x="360" y="270" width="80" height="10" rx="5" fill="#D64C47"/>
+
+  <!-- Floating Ballots -->
+  <g transform="rotate(-15, 320, 200)">
+    <rect x="320" y="200" width="60" height="40" rx="4" fill="white" stroke="#EF4444" stroke-width="2"/>
+    <line x1="330" y1="215" x2="370" y2="215" stroke="#EF4444" stroke-width="2"/>
+    <line x1="330" y1="225" x2="360" y2="225" stroke="#EF4444" stroke-width="2"/>
+  </g>
+
+  <g transform="rotate(15, 460, 180)">
+    <rect x="460" y="180" width="60" height="40" rx="4" fill="white" stroke="#EF4444" stroke-width="2"/>
+    <line x1="470" y1="195" x2="510" y2="195" stroke="#EF4444" stroke-width="2"/>
+    <line x1="470" y1="205" x2="500" y2="205" stroke="#EF4444" stroke-width="2"/>
+  </g>
+
+  <!-- Checkmark -->
+  <g transform="translate(385, 330)">
+    <circle cx="15" cy="15" r="15" fill="white"/>
+    <path d="M8 15L13 20L23 10" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Smart Contract Symbol -->
+  <g transform="translate(320, 280)">
+    <rect x="0" y="0" width="30" height="40" rx="4" fill="white" opacity="0.9"/>
+    <line x1="5" y1="10" x2="25" y2="10" stroke="#FF7E67" stroke-width="2"/>
+    <line x1="5" y1="20" x2="25" y2="20" stroke="#FF7E67" stroke-width="2"/>
+    <line x1="5" y1="30" x2="20" y2="30" stroke="#FF7E67" stroke-width="2"/>
+  </g>
+
+  <!-- Blockchain Network -->
+  <g transform="translate(200, 400)">
+    <rect x="0" y="0" width="40" height="40" rx="8" fill="#FF9777"/>
+    <rect x="60" y="0" width="40" height="40" rx="8" fill="#FF9777"/>
+    <rect x="120" y="0" width="40" height="40" rx="8" fill="#FF9777"/>
+    <line x1="42" y1="20" x2="58" y2="20" stroke="#FF7E67" stroke-width="3"/>
+    <line x1="102" y1="20" x2="118" y2="20" stroke="#FF7E67" stroke-width="3"/>
+  </g>
+
+  <!-- Transaction Hash -->
+  <g transform="translate(450, 450)">
+    <text font-family="monospace" font-size="12" fill="#666">
+      0x71C...F3D
+    </text>
+  </g>
+
+  <!-- Decorative Blockchain Nodes -->
+  <circle cx="250" cy="150" r="8" fill="#FFA41B"/>
+  <circle cx="550" cy="180" r="6" fill="#FFA41B"/>
+  <circle cx="180" cy="350" r="5" fill="#FFA41B"/>
+  <circle cx="600" cy="320" r="7" fill="#FFA41B"/>
+
+  <!-- Security Elements -->
+  <g transform="translate(500, 400)">
+    <rect x="10" y="15" width="30" height="25" rx="4" fill="#E85D54"/>
+    <path d="M15 15C15 8 20 3 25 3C30 3 35 8 35 15" stroke="#E85D54" stroke-width="3" fill="none"/>
+  </g>
+</svg>
