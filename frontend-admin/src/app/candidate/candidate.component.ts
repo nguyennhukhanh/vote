@@ -112,6 +112,7 @@ export class CandidateComponent implements OnInit {
     this.search = '';
     this.fromDate = '';
     this.toDate = '';
+    this.sort = 'DESC'; // Reset sort to default
     this.onSearch();
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, HostListener, Inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { StoreService } from '../services/store.service';
@@ -13,6 +13,7 @@ import { StoreService } from '../services/store.service';
 })
 export class NavbarComponent {
   userAvatar: string | null = null;
+  isSidebarOpen = false;
 
   constructor(
     @Inject(Router) private router: Router,
@@ -28,6 +29,17 @@ export class NavbarComponent {
         userData?.avatarUrl || 'assets/images/default-avatar.png';
     } catch (error) {
       console.error('Error loading user data:', error);
+    }
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    if (window.innerWidth > 768) {
+      this.isSidebarOpen = true;
     }
   }
 

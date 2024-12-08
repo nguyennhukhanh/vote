@@ -23,3 +23,7 @@ export enum CandidateApiEnum {
 export enum VoteApiEnum {
   PREFIX = '/vote',
 }
+
+export enum UserApiEnum {
+  PREFIX = '/users',
+}

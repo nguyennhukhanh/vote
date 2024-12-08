@@ -14,7 +14,6 @@ import {
 import type { IResponse } from '../../common/interfaces/response.interface';
 import { formatDate } from '../../common/utils/time.util';
 import { environment } from '../../environments/environment.development';
-import { NavbarComponent } from '../navbar/navbar.component';
 import { StoreService } from '../services/store.service';
 
 interface IVoteResponse {
@@ -56,7 +55,7 @@ interface IVoteResponse {
 @Component({
   selector: 'app-vote',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './vote.component.html',
   styleUrl: './vote.component.sass',
   animations: [

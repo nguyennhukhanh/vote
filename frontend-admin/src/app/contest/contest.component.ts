@@ -71,6 +71,7 @@ export class ContestComponent implements OnInit {
     this.search = '';
     this.fromDate = '';
     this.toDate = '';
+    this.sort = 'DESC'; // Reset sort to default
     this.onSearch();
   }
 

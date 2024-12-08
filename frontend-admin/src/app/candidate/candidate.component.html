@@ -19,27 +19,50 @@
 
     <!-- Enhanced Admin Search Bar -->
     <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input
-          type="text"
-          [(ngModel)]="search"
-          placeholder="Search by name..."
-          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
-        />
-        <input
-          type="date"
-          [(ngModel)]="fromDate"
-          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
-        />
-        <input
-          type="date"
-          [(ngModel)]="toDate"
-          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
-        />
-        <div class="flex gap-2">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <!-- Search Input -->
+        <div class="md:col-span-4">
+          <input
+            type="text"
+            [(ngModel)]="search"
+            placeholder="Search by name..."
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
+          />
+        </div>
+
+        <!-- Sort Dropdown -->
+        <div class="md:col-span-2">
+          <select
+            [(ngModel)]="sort"
+            (change)="onSearch()"
+            class="w-full pl-3 pr-10 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent sm:text-sm appearance-none bg-white"
+          >
+            <option value="DESC">Newest First</option>
+            <option value="ASC">Oldest First</option>
+          </select>
+        </div>
+
+        <!-- Date Range Inputs -->
+        <div class="md:col-span-3">
+          <input
+            type="date"
+            [(ngModel)]="fromDate"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
+          />
+        </div>
+        <div class="md:col-span-3">
+          <input
+            type="date"
+            [(ngModel)]="toDate"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors"
+          />
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="md:col-span-12 flex gap-2 justify-end">
           <button
             (click)="onSearch()"
-            class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg flex-1"
+            class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg"
           >
             Search
           </button>
