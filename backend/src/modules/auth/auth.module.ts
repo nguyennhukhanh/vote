@@ -3,9 +3,9 @@ import { AdminRefreshTokenGuard } from 'src/common/middlewares/admin-refresh-tok
 import { UserRefreshTokenGuard } from 'src/common/middlewares/user-refresh-token-guard.middleware';
 import { RoleEnum } from 'src/shared/enums';
 
-import { AdminService } from '../admin/admin.service';
 import { GUARD, ROLE_GUARD } from '../services/guard.service';
 import {
+  adminService,
   hashService,
   jwtService,
   sessionService,
@@ -20,7 +20,6 @@ import { WalletService } from './user-wallet.service';
 
 export class AuthModule {
   constructor(app: ThanhHoa) {
-    const adminService = new AdminService();
     const walletService = new WalletService(userService, userAuthService);
     const adminAuthService = new AdminAuthService(
       adminService,

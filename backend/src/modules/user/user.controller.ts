@@ -1,6 +1,7 @@
 import type { IRequestContext } from '@thanhhoajs/thanhhoa';
 import { customResponse } from 'src/utils/custom-response';
 
+import { UserQuery } from './dto/user.query';
 import { UserUpdate } from './dto/user.update';
 import type { UserService } from './user.service';
 
@@ -160,5 +161,112 @@ export class UserController {
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * @swagger
+   * /api/users:
+   *   get:
+   *     security:
+   *       - bearerAuth: []
+   *     tags:
+   *       - user
+   *     summary: Get users with pagination
+   *     description: Get list of users with pagination, search and filter options
+   *     parameters:
+   *       - in: query
+   *         name: search
+   *         schema:
+   *           type: string
+   *         description: Search by name or email
+   *       - in: query
+   *         name: fromDate
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Filter by created date from
+   *       - in: query
+   *         name: toDate
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Filter by created date to
+   *       - in: query
+   *         name: sort
+   *         schema:
+   *           type: string
+   *           enum: [ASC, DESC]
+   *         description: Sort by created date
+   *       - in: query
+   *         name: page
+   *         schema:
+   *           type: integer
+   *           minimum: 1
+   *           default: 1
+   *         description: Page number
+   *       - in: query
+   *         name: limit
+   *         schema:
+   *           type: integer
+   *           minimum: 1
+   *           default: 10
+   *         description: Items per page
+   *     responses:
+   *       200:
+   *         description: Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 items:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: number
+   *                       email:
+   *                         type: string
+   *                       fullName:
+   *                         type: string
+   *                       walletAddress:
+   *                         type: string
+   *                       avatarUrl:
+   *                         type: string
+   *                       isActive:
+   *                         type: boolean
+   *                       createdAt:
+   *                         type: string
+   *                         format: date-time
+   *                       updatedAt:
+   *                         type: string
+   *                         format: date-time
+   *                 meta:
+   *                   type: object
+   *                   properties:
+   *                     itemCount:
+   *                       type: number
+   *                       example: 10
+   *                     totalItems:
+   *                       type: number
+   *                       example: 100
+   *                     itemsPerPage:
+   *                       type: number
+   *                       example: 10
+   *                     totalPages:
+   *                       type: number
+   *                       example: 10
+   *                     currentPage:
+   *                       type: number
+   *                       example: 1
+   *       401:
+   *         description: Unauthorized
+   */
+  async getUsersWithPagination(context: IRequestContext): Promise<Response> {
+    const query = context.query;
+    const dto = new UserQuery(query);
+    const result = await this.userService.getUsersWithPagination(dto);
+    return customResponse(result);
   }
 }

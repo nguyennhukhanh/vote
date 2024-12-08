@@ -1,3 +1,4 @@
+import { AdminService } from '../admin/admin.service';
 import { HashService } from '../auth/hash.service';
 import { JwtService } from '../auth/jwt.service';
 import { UserAuthService } from '../auth/user-auth.service';
@@ -15,6 +16,7 @@ const userAuthServiceInstance = new UserAuthService(
   jwtServiceInstance,
   sessionServiceInstance,
 );
+const adminServiceInstance = new AdminService();
 
 export const hashService = hashServiceInstance;
 export const sessionService = sessionServiceInstance;
@@ -22,3 +24,4 @@ export const jwtService = jwtServiceInstance;
 export const redisService = redisServiceInstance;
 export const userService = userServiceInstance;
 export const userAuthService = userAuthServiceInstance;
+export const adminService = adminServiceInstance;

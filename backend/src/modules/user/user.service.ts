@@ -1,12 +1,59 @@
 import { HttpException } from '@thanhhoajs/thanhhoa';
-import { eq } from 'drizzle-orm';
+import type { SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, like, lte, or } from 'drizzle-orm';
+import { type MySqlSelect } from 'drizzle-orm/mysql-core';
 import { db } from 'src/database/db';
 import { type User, users } from 'src/database/schemas/users.schema';
+import { SortEnum } from 'src/shared/enums';
 import { deleteFile, uploadFile } from 'src/utils/file-local';
+import { paginate, type PaginatedResult } from 'src/utils/paginate';
 
+import type { UserQuery } from './dto/user.query';
 import type { UserUpdate } from './dto/user.update';
 
 export class UserService {
+  async getUsersWithPagination<T>(
+    query: UserQuery,
+  ): Promise<PaginatedResult<T>> {
+    const { search, fromDate, toDate, sort, page = 1, limit = 10 } = query;
+    const filters: SQL[] = [];
+
+    const queryBuilder = db
+      .select({
+        id: users.id,
+        email: users.email,
+        fullName: users.fullName,
+        walletAddress: users.walletAddress,
+        isActive: users.isActive,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      })
+      .from(users);
+
+    if (search) {
+      filters.push(
+        or(
+          like(users.fullName, `%${search}%`),
+          like(users.email, `%${search}%`),
+        ) as SQL,
+      );
+    }
+    if (fromDate) filters.push(gte(users.createdAt, fromDate));
+    if (toDate) filters.push(lte(users.createdAt, toDate));
+
+    if (filters.length > 0) {
+      queryBuilder.where(and(...filters));
+    }
+
+    if (sort) {
+      (queryBuilder as unknown as MySqlSelect).orderBy(
+        sort === SortEnum.ASC ? asc(users.createdAt) : desc(users.createdAt),
+      );
+    }
+
+    return await paginate(db, queryBuilder, page, limit);
+  }
+
   async getUserByEmail(email: string): Promise<User> {
     const result = await db
       .select()

@@ -13,6 +13,10 @@ export class UserModule {
       userController.getProfile(context),
     );
 
+    app.get('/users', GUARD(RoleEnum.ADMIN), (context: IRequestContext) =>
+      userController.getUsersWithPagination(context),
+    );
+
     app.patch('/user', GUARD(RoleEnum.USER), (context: IRequestContext) =>
       userController.updateProfile(context),
     );
