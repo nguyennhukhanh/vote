@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import type { OnInit } from '@angular/core';
 import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { toast } from 'ngx-sonner';
 import { firstValueFrom } from 'rxjs';
 
 import { AdminApiEnum } from '../../common/enums/api.enum';
@@ -35,6 +36,12 @@ interface IAdminResponse {
   };
 }
 
+interface ICreateAdminRequest {
+  email: string;
+  password: string;
+  fullName: string;
+}
+
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -63,6 +70,13 @@ export class AdminComponent implements OnInit {
   isLoading: boolean = false;
   Math = Math;
 
+  showCreateModal: boolean = false;
+  newAdmin: ICreateAdminRequest = {
+    email: '',
+    password: '',
+    fullName: '',
+  };
+
   constructor(
     @Inject(HttpClient) private http: HttpClient,
     @Inject(StoreService) private storeService: StoreService,
@@ -88,7 +102,7 @@ export class AdminComponent implements OnInit {
 
       const response = await firstValueFrom(
         this.http.get<IResponse>(
-          `${environment.apiUrl}${AdminApiEnum.PREFIX}?${queryParams}`,
+          `${environment.apiUrl}${AdminApiEnum.PREFIX}s?${queryParams}`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           },
@@ -100,6 +114,31 @@ export class AdminComponent implements OnInit {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  async createAdmin() {
+    try {
+      const accessToken = this.storeService.getTokens().accessToken;
+      await firstValueFrom(
+        this.http.post<IResponse>(
+          `${environment.apiUrl}${AdminApiEnum.PREFIX}/auth/register`,
+          this.newAdmin,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        ),
+      );
+      this.showCreateModal = false;
+      this.newAdmin = { email: '', password: '', fullName: '' };
+      await this.loadAdmins();
+    } catch (error) {
+      console.error('Error creating admin:', error);
+      toast.error(JSON.stringify((error as any).error.data[0]));
+    }
+  }
+
+  toggleCreateModal() {
+    this.showCreateModal = !this.showCreateModal;
   }
 
   onSearch() {

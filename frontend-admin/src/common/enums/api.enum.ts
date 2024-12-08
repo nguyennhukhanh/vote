@@ -11,7 +11,7 @@ export enum AuthApiEnum {
 }
 
 export enum AdminApiEnum {
-  PREFIX = '/admins',
+  PREFIX = '/admin',
 }
 
 export enum ContestApiEnum {
