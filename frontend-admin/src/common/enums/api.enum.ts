@@ -10,7 +10,9 @@ export enum AuthApiEnum {
   Login = '/auth/login',
 }
 
-export enum AdminApiEnum {}
+export enum AdminApiEnum {
+  PREFIX = '/admins',
+}
 
 export enum ContestApiEnum {
   PREFIX = '/contest',

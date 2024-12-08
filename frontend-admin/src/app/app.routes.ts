@@ -1,5 +1,6 @@
 import type { Routes } from '@angular/router';
 
+import { AdminComponent } from './admin/admin.component';
 import { AuthComponent } from './auth/auth.component';
 import { CandidateComponent } from './candidate/candidate.component';
 import { ContestComponent } from './contest/contest.component';
@@ -21,6 +22,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'vote', component: VoteComponent },
       { path: 'user', component: UserComponent },
+      { path: 'admin', component: AdminComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
