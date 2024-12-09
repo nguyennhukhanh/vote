@@ -1,0 +1,51 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+      <p class="mt-2 text-gray-600">View contest statistics and analytics</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input
+          type="date"
+          [(ngModel)]="fromDate"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <input
+          type="date"
+          [(ngModel)]="toDate"
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <div class="flex gap-2">
+          <button
+            (click)="onSearch()"
+            class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg flex-1"
+          >
+            Search
+          </button>
+          <button
+            (click)="clearFilters()"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="w-full h-[400px] relative">
+        <div
+          *ngIf="isLoading"
+          class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75"
+        >
+          <div
+            class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+          ></div>
+        </div>
+        <canvas id="contestChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>

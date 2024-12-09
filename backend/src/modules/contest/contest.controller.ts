@@ -2,6 +2,7 @@ import type { IRequestContext } from '@thanhhoajs/thanhhoa';
 import { customResponse } from 'src/utils/custom-response';
 
 import type { ContestService } from './contest.service';
+import { ContestChartQuery } from './dto/contest.chart.query';
 import { ContestCreate } from './dto/contest.create';
 import { ContestQuery } from './dto/contest.query';
 
@@ -95,6 +96,36 @@ export class ContestController {
     const dto = new ContestCreate({ name, startTime, endTime });
 
     const result = await this.contestService.createContest(admin, dto);
+    return customResponse(result);
+  }
+
+  /**
+   * @swagger
+   * /api/contest/statistics:
+   *   get:
+   *     tags:
+   *       - contest
+   *     summary: Get contest statistics for chart
+   *     parameters:
+   *       - in: query
+   *         name: fromDate
+   *         schema:
+   *           type: string
+   *           format: date-time
+   *         description: Filter by start date from
+   *       - in: query
+   *         name: toDate
+   *         schema:
+   *           type: string
+   *           format: date-time
+   *         description: Filter by start date to
+   *     responses:
+   *       200:
+   *         description: Contest statistics for chart
+   */
+  async getContestStatistics(context: IRequestContext) {
+    const query = new ContestChartQuery(context.query);
+    const result = await this.contestService.getContestStatistics(query);
     return customResponse(result);
   }
 }

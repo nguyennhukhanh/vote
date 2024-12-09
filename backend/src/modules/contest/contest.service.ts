@@ -7,11 +7,14 @@ import fs from 'fs';
 import { appConfig } from 'src/configs/app.config';
 import { db } from 'src/database/db';
 import { type Admin, admins } from 'src/database/schemas/admins.schema';
+import { candidates } from 'src/database/schemas/candidates.schema';
 import { contests } from 'src/database/schemas/contests.schema';
+import { votes } from 'src/database/schemas/votes.schema';
 import { SortEnum } from 'src/shared/enums';
 import { dateToUnixTimestamp } from 'src/utils/moment';
 import { paginate, type PaginatedResult } from 'src/utils/paginate';
 
+import type { ContestChartQuery } from './dto/contest.chart.query';
 import type { ContestCreate } from './dto/contest.create';
 import type { ContestQuery } from './dto/contest.query';
 
@@ -131,5 +134,44 @@ export class ContestService {
         throw error;
       }
     });
+  }
+
+  async getContestStatistics(query: ContestChartQuery) {
+    const { fromDate, toDate } = query;
+    const filters: SQL[] = [];
+
+    const baseQuery = db
+      .select({
+        contestId: contests.id,
+        contestName: contests.name,
+        candidateCount: sql<number>`COUNT(DISTINCT ${candidates.id})`,
+        voteCount: sql<number>`COUNT(DISTINCT ${votes.id})`,
+      })
+      .from(contests)
+      .leftJoin(candidates, eq(candidates.voteId, contests.voteId))
+      .leftJoin(votes, eq(votes.voteId, contests.voteId));
+
+    if (fromDate) filters.push(gte(contests.startTime, fromDate));
+    if (toDate) filters.push(lte(contests.startTime, toDate));
+
+    if (filters.length > 0) {
+      baseQuery.where(and(...filters));
+    }
+
+    const results = await baseQuery.groupBy(contests.id, contests.name);
+
+    return {
+      labels: results.map((r) => r.contestName),
+      datasets: [
+        {
+          label: 'Number of Candidates',
+          data: results.map((r) => r.candidateCount),
+        },
+        {
+          label: 'Total Votes',
+          data: results.map((r) => r.voteCount),
+        },
+      ],
+    };
   }
 }

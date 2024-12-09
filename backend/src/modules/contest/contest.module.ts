@@ -18,6 +18,10 @@ export class ContestModule {
       app.post('', GUARD(RoleEnum.ADMIN), (context: IRequestContext) =>
         contestController.createContest(context),
       );
+
+      app.get('/statistics', (context: IRequestContext) =>
+        contestController.getContestStatistics(context),
+      );
     });
   }
 }
