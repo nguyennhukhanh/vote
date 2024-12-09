@@ -7,6 +7,7 @@ import { Chart } from 'chart.js/auto';
 import { firstValueFrom } from 'rxjs';
 
 import { ContestApiEnum } from '../../common/enums/api.enum';
+import type { IResponse } from '../../common/interfaces/response.interface';
 import { environment } from '../../environments/environment.development';
 import { StoreService } from '../services/store.service';
 
@@ -34,10 +35,18 @@ interface ApiResponse {
   styleUrl: './dashboard.component.sass',
 })
 export class DashboardComponent implements OnInit {
-  fromDate: string = '';
-  toDate: string = '';
+  // Separate date filters for different charts
+  overviewFromDate: string = '';
+  overviewToDate: string = '';
+  timelineFromDate: string = '';
+  timelineToDate: string = '';
+
   isLoading: boolean = false;
   private chart: Chart | null = null;
+  private pieChart: Chart | null = null;
+  private stackedChart: Chart | null = null;
+  selectedContestId: number | null = null;
+  contests: any[] = [];
 
   constructor(
     @Inject(HttpClient) private http: HttpClient,
@@ -45,21 +54,81 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.fetchChartData();
+    this.fetchContests();
+    this.fetchOverviewData();
   }
 
-  private async fetchChartData() {
-    this.isLoading = true;
+  private async fetchContests() {
     try {
       const accessToken = this.storeService.getTokens().accessToken;
-      const queryParams = new URLSearchParams();
+      const response = await firstValueFrom(
+        this.http.get<IResponse>(
+          `${environment.apiUrl}${ContestApiEnum.PREFIX}`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        ),
+      );
+      this.contests = response.data.items;
+      if (this.contests.length > 0) {
+        this.selectedContestId = this.contests[0].id;
+        this.fetchPieChart();
+        this.fetchTimelineData();
+      }
+    } catch (error) {
+      console.error('Error loading contests:', error);
+    }
+  }
 
-      if (this.fromDate) queryParams.append('fromDate', this.fromDate);
-      if (this.toDate) queryParams.append('toDate', this.toDate);
+  fetchOverviewData() {
+    this.isLoading = true;
+    const params = new URLSearchParams();
+    if (this.overviewFromDate) params.append('fromDate', this.overviewFromDate);
+    if (this.overviewToDate) params.append('toDate', this.overviewToDate);
+    this.fetchChartData(params);
+  }
+
+  fetchTimelineData() {
+    if (!this.selectedContestId) return;
+    const params = new URLSearchParams();
+    if (this.timelineFromDate) params.append('fromDate', this.timelineFromDate);
+    if (this.timelineToDate) params.append('toDate', this.timelineToDate);
+    this.fetchStackedChart(params);
+  }
+
+  async fetchContestDetails() {
+    if (!this.selectedContestId) return;
+    try {
+      this.isLoading = true;
+      // Fetch both pie and stacked charts in parallel
+      await Promise.all([this.fetchPieChart(), this.fetchTimelineData()]);
+    } catch (error) {
+      console.error('Error loading contest details:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  onContestChange() {
+    if (this.selectedContestId) {
+      this.fetchContestDetails();
+    }
+  }
+
+  updateContestCharts() {
+    if (this.selectedContestId) {
+      this.fetchContestDetails();
+    }
+  }
+
+  // Update existing methods to use passed parameters
+  private async fetchChartData(params: URLSearchParams) {
+    try {
+      const accessToken = this.storeService.getTokens().accessToken;
 
       const response = await firstValueFrom(
         this.http.get<ApiResponse>(
-          `${environment.apiUrl}${ContestApiEnum.PREFIX}/statistics?${queryParams}`,
+          `${environment.apiUrl}${ContestApiEnum.PREFIX}/statistics?${params}`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           },
@@ -73,14 +142,39 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  onSearch() {
-    this.fetchChartData();
+  private async fetchPieChart() {
+    try {
+      const accessToken = this.storeService.getTokens().accessToken;
+      const response = await firstValueFrom(
+        this.http.get<ApiResponse>(
+          `${environment.apiUrl}${ContestApiEnum.PREFIX}/${this.selectedContestId}/pie-chart`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        ),
+      );
+      this.createPieChart(response.data);
+    } catch (error) {
+      console.error('Error loading pie chart:', error);
+    }
   }
 
-  clearFilters() {
-    this.fromDate = '';
-    this.toDate = '';
-    this.fetchChartData();
+  private async fetchStackedChart(params: URLSearchParams) {
+    try {
+      const accessToken = this.storeService.getTokens().accessToken;
+
+      const response = await firstValueFrom(
+        this.http.get<ApiResponse>(
+          `${environment.apiUrl}${ContestApiEnum.PREFIX}/${this.selectedContestId}/stacked-chart?${params}`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        ),
+      );
+      this.createStackedChart(response.data);
+    } catch (error) {
+      console.error('Error loading stacked chart:', error);
+    }
   }
 
   private createChart(data: ChartData) {
@@ -117,9 +211,94 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  private createPieChart(data: ChartData) {
+    const ctx = document.getElementById('votePieChart') as HTMLCanvasElement;
+    if (this.pieChart) {
+      this.pieChart.destroy();
+    }
+
+    this.pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: data.labels,
+        datasets: data.datasets,
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          },
+          title: {
+            display: true,
+            text: 'Vote Distribution',
+          },
+        },
+      },
+    });
+  }
+
+  private createStackedChart(data: ChartData) {
+    const ctx = document.getElementById(
+      'voteStackedChart',
+    ) as HTMLCanvasElement;
+    if (this.stackedChart) {
+      this.stackedChart.destroy();
+    }
+
+    // Define a fixed color palette
+    const colors = [
+      '#FF6384',
+      '#36A2EB',
+      '#FFCE56',
+      '#4BC0C0',
+      '#9966FF',
+      '#FF9F40',
+      '#FF6384',
+      '#C9CBCF',
+      '#7BC225',
+      '#B94A48',
+    ];
+
+    // Assign colors to datasets
+    const datasets = data.datasets.map((dataset, index) => ({
+      ...dataset,
+      backgroundColor: colors[index % colors.length],
+    }));
+
+    this.stackedChart = new Chart(ctx, {
+      type: 'bar',
+      data: { ...data, datasets },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Votes Over Time',
+          },
+        },
+      },
+    });
+  }
+
   ngOnDestroy() {
     if (this.chart) {
       this.chart.destroy();
+    }
+    if (this.pieChart) {
+      this.pieChart.destroy();
+    }
+    if (this.stackedChart) {
+      this.stackedChart.destroy();
     }
   }
 }
