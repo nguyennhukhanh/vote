@@ -2,6 +2,7 @@ import type { IRequestContext } from '@thanhhoajs/thanhhoa';
 import { customResponse } from 'src/utils/custom-response';
 
 import type { ContestService } from './contest.service';
+import { ContestCandidateChartQuery } from './dto/contest.candidate.chart.query';
 import { ContestChartQuery } from './dto/contest.chart.query';
 import { ContestCreate } from './dto/contest.create';
 import { ContestQuery } from './dto/contest.query';
@@ -126,6 +127,67 @@ export class ContestController {
   async getContestStatistics(context: IRequestContext) {
     const query = new ContestChartQuery(context.query);
     const result = await this.contestService.getContestStatistics(query);
+    return customResponse(result);
+  }
+
+  /**
+   * @swagger
+   * /api/contest/{contestId}/pie-chart:
+   *   get:
+   *     tags:
+   *       - contest
+   *     summary: Get vote distribution pie chart for a contest
+   *     parameters:
+   *       - in: path
+   *         name: contestId
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Pie chart data for candidate vote distribution
+   */
+  async getCandidatePieChart(context: IRequestContext) {
+    const contestId = Number(context.params.contestId);
+    const result = await this.contestService.getCandidatePieChart(contestId);
+    return customResponse(result);
+  }
+
+  /**
+   * @swagger
+   * /api/contest/{contestId}/stacked-chart:
+   *   get:
+   *     tags:
+   *       - contest
+   *     summary: Get stacked bar chart for votes over time
+   *     parameters:
+   *       - in: path
+   *         name: contestId
+   *         required: true
+   *         schema:
+   *           type: integer
+   *       - in: query
+   *         name: fromDate
+   *         schema:
+   *           type: string
+   *           format: date-time
+   *       - in: query
+   *         name: toDate
+   *         schema:
+   *           type: string
+   *           format: date-time
+   *     responses:
+   *       200:
+   *         description: Stacked chart data for votes over time
+   */
+  async getCandidateStackedChart(context: IRequestContext) {
+    const contestId = Number(context.params.contestId);
+    const query = new ContestCandidateChartQuery({
+      ...context.query,
+      contestId,
+    });
+
+    const result = await this.contestService.getCandidateStackedChart(query);
     return customResponse(result);
   }
 }

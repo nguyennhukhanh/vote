@@ -13,7 +13,9 @@ import { votes } from 'src/database/schemas/votes.schema';
 import { SortEnum } from 'src/shared/enums';
 import { dateToUnixTimestamp } from 'src/utils/moment';
 import { paginate, type PaginatedResult } from 'src/utils/paginate';
+import { getRandomColor } from 'src/utils/random-color';
 
+import type { ContestCandidateChartQuery } from './dto/contest.candidate.chart.query';
 import type { ContestChartQuery } from './dto/contest.chart.query';
 import type { ContestCreate } from './dto/contest.create';
 import type { ContestQuery } from './dto/contest.query';
@@ -172,6 +174,121 @@ export class ContestService {
           data: results.map((r) => r.voteCount),
         },
       ],
+    };
+  }
+
+  async getCandidatePieChart(contestId: number) {
+    const results = await db
+      .select({
+        candidateId: candidates.candidateId,
+        candidateName: candidates.name,
+        voteCount: sql<number>`COUNT(${votes.id})`,
+      })
+      .from(candidates)
+      .leftJoin(
+        votes,
+        and(
+          eq(votes.voteId, candidates.voteId),
+          eq(votes.candidateId, candidates.candidateId),
+        ),
+      )
+      .where(eq(candidates.voteId, contestId))
+      .groupBy(candidates.candidateId, candidates.name);
+
+    const totalVotes = results.reduce((sum, r) => sum + r.voteCount, 0);
+
+    return {
+      labels: results.map((r) => r.candidateName),
+      datasets: [
+        {
+          data: results.map((r) =>
+            ((r.voteCount / totalVotes) * 100).toFixed(2),
+          ),
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF',
+          ],
+        },
+      ],
+    };
+  }
+
+  async getCandidateStackedChart(query: ContestCandidateChartQuery) {
+    const { contestId, fromDate, toDate } = query;
+
+    const candidatesQuery = await db
+      .select({
+        candidateId: candidates.candidateId,
+        candidateName: candidates.name,
+      })
+      .from(candidates)
+      .where(eq(candidates.voteId, contestId));
+
+    const filters: SQL[] = [eq(candidates.voteId, contestId)];
+
+    if (fromDate) filters.push(gte(votes.createdAt, new Date(fromDate)));
+    if (toDate) filters.push(lte(votes.createdAt, new Date(toDate)));
+
+    const results = await db
+      .select({
+        date: sql<string>`DATE_FORMAT(${votes.createdAt}, '%Y-%m-%d')`.as(
+          'date',
+        ),
+        candidateId: candidates.candidateId,
+        candidateName: candidates.name,
+        voteCount: sql<number>`COUNT(${votes.id})`,
+      })
+      .from(candidates)
+      .leftJoin(
+        votes,
+        and(
+          eq(votes.voteId, candidates.voteId),
+          eq(votes.candidateId, candidates.candidateId),
+        ),
+      )
+      .where(and(...filters))
+      .groupBy(
+        sql`DATE_FORMAT(${votes.createdAt}, '%Y-%m-%d')`,
+        candidates.candidateId,
+        candidates.name,
+      )
+      .orderBy(asc(votes.createdAt));
+
+    // Get all unique dates
+    const dates = [
+      ...new Set(
+        results.map((r) => r.date).filter((date) => date !== 'No votes'),
+      ),
+    ].sort();
+
+    // Initialize data structure with 0 votes for all candidates on all dates
+    const dateGroups: Record<string, Record<string, number>> = {};
+    dates.forEach((date) => {
+      dateGroups[date] = {};
+      candidatesQuery.forEach((candidate) => {
+        dateGroups[date][candidate.candidateName] = 0;
+      });
+    });
+
+    // Fill in actual vote counts
+    results.forEach((result) => {
+      if (result.date !== 'No votes') {
+        dateGroups[result.date][result.candidateName] = result.voteCount;
+      }
+    });
+
+    return {
+      labels: dates,
+      datasets: candidatesQuery.map((candidate) => ({
+        label: candidate.candidateName,
+        data: dates.map(
+          (date) => dateGroups[date][candidate.candidateName] || 0,
+        ),
+        backgroundColor: getRandomColor(),
+      })),
     };
   }
 }

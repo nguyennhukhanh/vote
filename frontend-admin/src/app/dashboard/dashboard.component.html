@@ -15,18 +15,18 @@
             <input
               type="date"
               [(ngModel)]="overviewFromDate"
-              class="border border-gray-300 rounded-lg px-3 py-1 text-sm"
+              class="border border-gray-300 rounded-lg px-3 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
             />
             <span class="text-gray-500">to</span>
             <input
               type="date"
               [(ngModel)]="overviewToDate"
-              class="border border-gray-300 rounded-lg px-3 py-1 text-sm"
+              class="border border-gray-300 rounded-lg px-3 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
             />
           </div>
           <button
             (click)="fetchOverviewData()"
-            class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-sm hover:bg-blue-100"
+            class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg hover:opacity-90"
           >
             Update Overview
           </button>
@@ -71,7 +71,15 @@
         <!-- Vote Distribution -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 class="text-lg font-medium mb-4">Vote Distribution</h3>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-medium">Vote Distribution</h3>
+              <button
+                (click)="fetchPieChart()"
+                class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg hover:opacity-90"
+              >
+                Refresh Distribution
+              </button>
+            </div>
             <div class="w-full h-[300px]">
               <canvas id="votePieChart"></canvas>
             </div>
@@ -79,39 +87,60 @@
 
           <!-- Votes Timeline -->
           <div class="bg-white rounded-lg p-6 border border-gray-200">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-medium">Votes Timeline</h3>
-              <div class="flex gap-2 items-center">
-                <input
-                  type="date"
-                  [(ngModel)]="timelineFromDate"
-                  class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-                />
-                <span class="text-gray-500">to</span>
-                <input
-                  type="date"
-                  [(ngModel)]="timelineToDate"
-                  class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-                />
-                <button
-                  (click)="fetchTimelineData()"
-                  class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg hover:opacity-90"
-                >
-                  Update
-                </button>
+            <div class="flex flex-col space-y-4">
+              <div class="flex justify-between items-center">
+                <h3 class="text-lg font-medium">Votes Timeline</h3>
+                <div class="flex flex-col space-y-2">
+                  <div class="flex gap-2 items-center">
+                    <div class="flex flex-col">
+                      <label class="text-sm text-gray-600">From</label>
+                      <input
+                        type="date"
+                        [(ngModel)]="timelineFromDate"
+                        class="border border-gray-300 rounded-lg px-3 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                      />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm text-gray-600">To</label>
+                      <input
+                        type="date"
+                        [(ngModel)]="timelineToDate"
+                        class="border border-gray-300 rounded-lg px-3 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                      />
+                    </div>
+                    <button
+                      (click)="fetchTimelineData()"
+                      [disabled]="isLoading"
+                      class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg hover:opacity-90 disabled:opacity-50 h-[38px] mt-auto"
+                    >
+                      <span *ngIf="!isLoading">Update Timeline</span>
+                      <span *ngIf="isLoading" class="flex items-center gap-2">
+                        <div
+                          class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"
+                        ></div>
+                        Loading...
+                      </span>
+                    </button>
+                  </div>
+                  <div *ngIf="dateError" class="text-red-500 text-sm">
+                    {{ dateError }}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="w-full h-[300px]">
-              <canvas id="voteStackedChart"></canvas>
+              <div class="w-full h-[300px] relative">
+                <div
+                  *ngIf="isLoading"
+                  class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10"
+                >
+                  <div
+                    class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+                  ></div>
+                </div>
+                <canvas id="voteStackedChart"></canvas>
+              </div>
             </div>
           </div>
         </div>
-        <button
-          (click)="updateContestCharts()"
-          class="bg-gradient-to-r from-blue-200 to-indigo-400 text-white px-4 py-2 rounded-lg hover:opacity-90"
-        >
-          Update Charts
-        </button>
       </div>
     </div>
   </div>

@@ -22,6 +22,14 @@ export class ContestModule {
       app.get('/statistics', (context: IRequestContext) =>
         contestController.getContestStatistics(context),
       );
+
+      app.get('/:contestId/pie-chart', (context: IRequestContext) =>
+        contestController.getCandidatePieChart(context),
+      );
+
+      app.get('/:contestId/stacked-chart', (context: IRequestContext) =>
+        contestController.getCandidateStackedChart(context),
+      );
     });
   }
 }

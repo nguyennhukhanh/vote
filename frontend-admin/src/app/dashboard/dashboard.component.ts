@@ -47,6 +47,7 @@ export class DashboardComponent implements OnInit {
   private stackedChart: Chart | null = null;
   selectedContestId: number | null = null;
   contests: any[] = [];
+  dateError: string = '';
 
   constructor(
     @Inject(HttpClient) private http: HttpClient,
@@ -90,6 +91,11 @@ export class DashboardComponent implements OnInit {
 
   fetchTimelineData() {
     if (!this.selectedContestId) return;
+
+    if (!this.validateDates(this.timelineFromDate, this.timelineToDate)) {
+      return;
+    }
+
     const params = new URLSearchParams();
     if (this.timelineFromDate) params.append('fromDate', this.timelineFromDate);
     if (this.timelineToDate) params.append('toDate', this.timelineToDate);
@@ -111,13 +117,9 @@ export class DashboardComponent implements OnInit {
 
   onContestChange() {
     if (this.selectedContestId) {
-      this.fetchContestDetails();
-    }
-  }
-
-  updateContestCharts() {
-    if (this.selectedContestId) {
-      this.fetchContestDetails();
+      // Fetch both charts when contest changes
+      this.fetchPieChart();
+      this.fetchTimelineData();
     }
   }
 
@@ -142,8 +144,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  private async fetchPieChart() {
+  public async fetchPieChart() {
+    if (!this.selectedContestId) return;
     try {
+      this.isLoading = true;
       const accessToken = this.storeService.getTokens().accessToken;
       const response = await firstValueFrom(
         this.http.get<ApiResponse>(
@@ -156,24 +160,32 @@ export class DashboardComponent implements OnInit {
       this.createPieChart(response.data);
     } catch (error) {
       console.error('Error loading pie chart:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
   private async fetchStackedChart(params: URLSearchParams) {
     try {
+      this.isLoading = true;
       const accessToken = this.storeService.getTokens().accessToken;
 
       const response = await firstValueFrom(
         this.http.get<ApiResponse>(
-          `${environment.apiUrl}${ContestApiEnum.PREFIX}/${this.selectedContestId}/stacked-chart?${params}`,
+          `${environment.apiUrl}${ContestApiEnum.PREFIX}/${this.selectedContestId}/stacked-chart${params.toString() ? '?' + params.toString() : ''}`,
           {
-            headers: { Authorization: `Bearer ${accessToken}` },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
           },
         ),
       );
       this.createStackedChart(response.data);
     } catch (error) {
       console.error('Error loading stacked chart:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
@@ -288,6 +300,22 @@ export class DashboardComponent implements OnInit {
         },
       },
     });
+  }
+
+  validateDates(startDate: string, endDate: string): boolean {
+    if (!startDate && !endDate) return true;
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (start > end) {
+        this.dateError = 'Start date cannot be later than end date';
+        return false;
+      }
+    }
+
+    this.dateError = '';
+    return true;
   }
 
   ngOnDestroy() {
