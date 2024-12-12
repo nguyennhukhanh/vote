@@ -5,6 +5,7 @@ import { CandidateComponent } from './candidate/candidate.component';
 import { ContestComponent } from './contest/contest.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ResultComponent } from './result/result.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -12,5 +13,6 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'contest', component: ContestComponent },
   { path: 'contest/:contestId/candidate', component: CandidateComponent },
+  { path: 'results', component: ResultComponent },
   { path: '', component: HomeComponent },
 ];
