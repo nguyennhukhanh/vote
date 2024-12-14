@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: backend
     restart: always
     env_file:
       - .env
@@ -17,17 +18,19 @@ services:
       - mysql_db
   
   worker:
-  container_name: worker_vote
-  build:
-    context: .
-    dockerfile: Dockerfile
-  restart: always
-  env_file:
-    - .env
-  depends_on:
-    - redis
-    - mysql_db
-  command: bun run prod:worker
+    container_name: worker_vote
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - mysql_db
+    entrypoint: ["bun"]
+    command: ["run", "prod:worker"]
 
   redis:
     image: redis:latest
@@ -37,7 +40,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_NAME=${REDIS_NAME}
     ports:
-      - 6378:${REDIS_PORT}
+      - 6377:${REDIS_PORT}
     volumes:
       - redis-data:/data
 
