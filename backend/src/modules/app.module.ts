@@ -3,6 +3,7 @@ import type { ThanhHoa } from '@thanhhoajs/thanhhoa';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { CandidateModule } from './candidate/candidate.module';
+import { ChatModule } from './chat/chat.module';
 import { ContestModule } from './contest/contest.module';
 import { DefaultModule } from './default/default.module';
 import { UserModule } from './user/user.module';
@@ -17,5 +18,6 @@ export class AppModule {
     new ContestModule(app);
     new CandidateModule(app);
     new VoteModule(app);
+    new ChatModule(app);
   }
 }

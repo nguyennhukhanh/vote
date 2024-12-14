@@ -10,8 +10,10 @@
     "test": "bun test",
     "dev": "bun --watch src/main.ts",
     "dev:worker": "bun --watch src/worker.ts",
+    "dev:bot": "bun --watch src/bot.ts",
     "prod": "bun src/main.ts",
     "prod:worker": "bun src/worker.ts",
+    "prod:bot": "bun src/bot.ts",
     "cluster": "bun src/cluster.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -20,6 +22,7 @@
     "lint": "eslint \"{src,test}/**/*.ts\" --fix"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@thanhhoajs/logger": "latest",
     "@thanhhoajs/thanhhoa": "latest",
     "@thanhhoajs/validator": "latest",
@@ -32,6 +35,7 @@
     "moment": "^2.30.1",
     "mysql2": "^3.11.5",
     "node-cache": "^5.1.2",
+    "node-telegram-bot-api": "^0.66.0",
     "p-limit": "^6.1.0",
     "p-retry": "^6.2.1",
     "swagger-jsdoc": "^6.2.8",

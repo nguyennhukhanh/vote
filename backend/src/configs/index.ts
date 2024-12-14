@@ -2,6 +2,7 @@ import { Logger } from '@thanhhoajs/logger';
 
 import { adminAuthConfig, adminAuthValidator } from './admin-auth.config';
 import { appConfig, appValidator } from './app.config';
+import { botConfig, botValidator } from './bot.config';
 import { dbConfig, dbValidator } from './database.config';
 import { redisConfig, redisValidator } from './redis.config';
 import { userAuthConfig, userAuthValidator } from './user-auth.config';
@@ -16,6 +17,7 @@ export const runValidators = async () => {
       userAuthValidator.validate(userAuthConfig),
       adminAuthValidator.validate(adminAuthConfig),
       redisValidator.validate(redisConfig),
+      botValidator.validate(botConfig),
     ]);
 
     const allErrors = results.filter((errors) => errors.length > 0);

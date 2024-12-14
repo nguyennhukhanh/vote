@@ -1,11 +1,10 @@
 import type { IRequestContext, ThanhHoa } from '@thanhhoajs/thanhhoa';
 
+import { voteService } from '../services/shared.service';
 import { VoteController } from './vote.controller';
-import { VoteService } from './vote.service';
 
 export class VoteModule {
   constructor(app: ThanhHoa) {
-    const voteService = new VoteService();
     const voteController = new VoteController(voteService);
 
     app.group('/vote', (app) => {
