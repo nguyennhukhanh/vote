@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  frontend-user:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+
+  frontend-admin:
+    build:
+      context: ./frontend-admin
+      dockerfile: Dockerfile
+    ports:
+      - "4201:80"
+    restart: unless-stopped
