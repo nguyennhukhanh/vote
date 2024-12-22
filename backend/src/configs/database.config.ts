@@ -20,6 +20,7 @@ const dbConfig = {
   database: process.env.DB_DATABASE,
   synchronize: process.env.DB_SYNCHRONIZE === 'true',
   debug: process.env.DB_DEBUG === 'true',
+  timezone: 'Z', // Force UTC timezone
 };
 
 export { dbConfig, dbValidator };

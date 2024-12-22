@@ -171,9 +171,15 @@ export class ContestComponent implements OnInit {
   }
 
   dateValidator(group: FormGroup) {
-    const start = new Date(group.get('startTime')?.value);
-    const end = new Date(group.get('endTime')?.value);
-    const now = new Date();
+    const startStr = group.get('startTime')?.value;
+    const endStr = group.get('endTime')?.value;
+
+    if (!startStr || !endStr) return null;
+
+    // Convert to UTC time to compare
+    const start = new Date(startStr).getTime();
+    const end = new Date(endStr).getTime();
+    const now = new Date().getTime();
 
     if (start < now) {
       return { pastStartDate: true };
