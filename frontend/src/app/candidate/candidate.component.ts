@@ -137,7 +137,6 @@ export class CandidateComponent implements OnInit {
 
       this.contestInfo = contest;
       const now = moment().unix();
-
       const startTime = Number(contest.startTime);
       const endTime = Number(contest.endTime);
 
@@ -158,8 +157,11 @@ export class CandidateComponent implements OnInit {
   }
 
   canVote(): boolean {
-    if (this.isLoadingContract) return false;
-    return this.contestStatus === ContestTimeStatus.ACTIVE;
+    if (this.isLoadingContract || !this.contestInfo) return false;
+    const now = moment().unix();
+    const startTime = Number(this.contestInfo.startTime);
+    const endTime = Number(this.contestInfo.endTime);
+    return now >= startTime && now <= endTime;
   }
 
   getContestStatusMessage(): string {
