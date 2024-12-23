@@ -5,6 +5,7 @@ import type { MySqlSelect } from 'drizzle-orm/mysql-core';
 import type { Contract } from 'ethers';
 import { ethers, JsonRpcProvider, type Provider } from 'ethers';
 import fs from 'fs';
+import moment from 'moment';
 import { appConfig } from 'src/configs/app.config';
 import { db } from 'src/database/db';
 import type { Admin } from 'src/database/schemas/admins.schema';
@@ -153,7 +154,7 @@ export class CandidateService {
 
         if (!voteExist) throw new HttpException('Contest not found', 404);
 
-        if (new Date(voteExist.startTime) < new Date())
+        if (moment(voteExist.startTime).isBefore(moment()))
           throw new HttpException(
             'Cannot add candidates after voting has started',
             400,

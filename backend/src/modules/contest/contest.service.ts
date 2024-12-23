@@ -4,6 +4,7 @@ import type { MySqlSelect } from 'drizzle-orm/mysql-core';
 import type { Contract } from 'ethers';
 import { ethers, JsonRpcProvider, type Provider } from 'ethers';
 import fs from 'fs';
+import moment from 'moment';
 import { appConfig } from 'src/configs/app.config';
 import { db } from 'src/database/db';
 import { type Admin, admins } from 'src/database/schemas/admins.schema';
@@ -117,8 +118,8 @@ export class ContestService {
           .values({
             name,
             createdBy: admin.id,
-            startTime: new Date(startTime),
-            endTime: new Date(endTime),
+            startTime: moment.utc(startTime).toDate(),
+            endTime: moment.utc(endTime).toDate(),
             blockNumber: receipt?.blockNumber,
             transactionHash: receipt?.hash,
           })

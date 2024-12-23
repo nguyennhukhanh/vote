@@ -1,5 +1,6 @@
 import { HttpException } from '@thanhhoajs/thanhhoa';
 import { eq, sql } from 'drizzle-orm';
+import moment from 'moment';
 import { adminAuthConfig } from 'src/configs/admin-auth.config';
 import { userAuthConfig } from 'src/configs/user-auth.config';
 import { db } from 'src/database/db';
@@ -38,9 +39,9 @@ export class SessionService {
     // Create a new session
     const newSession = {
       userId,
-      expiresAt: new Date(
-        Date.now() + Number(userAuthConfig.refreshTokenLifetime) * 1000,
-      ),
+      expiresAt: moment()
+        .add(Number(userAuthConfig.refreshTokenLifetime), 'seconds')
+        .toDate(),
     };
 
     const result = await db
@@ -69,7 +70,7 @@ export class SessionService {
       .where(
         sql`${userSessions.id} = ${sessionId} AND ${
           userSessions.expiresAt
-        } > ${new Date()}`,
+        } > ${moment().toDate()}`,
       )
       .innerJoin(users, eq(userSessions.userId, users.id))
       .limit(1);
@@ -129,9 +130,9 @@ export class SessionService {
     // Create a new session
     const newSession = {
       adminId,
-      expiresAt: new Date(
-        Date.now() + Number(adminAuthConfig.refreshTokenLifetime) * 1000,
-      ),
+      expiresAt: moment()
+        .add(Number(adminAuthConfig.refreshTokenLifetime), 'seconds')
+        .toDate(),
     };
 
     const result = await db
@@ -159,7 +160,7 @@ export class SessionService {
       .where(
         sql`${adminSessions.id} = ${sessionId} AND ${
           adminSessions.expiresAt
-        } > ${new Date()}`,
+        } > ${moment().toDate()}`,
       )
       .innerJoin(admins, eq(adminSessions.adminId, admins.id))
       .limit(1);

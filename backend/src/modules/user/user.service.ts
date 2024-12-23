@@ -2,6 +2,7 @@ import { HttpException } from '@thanhhoajs/thanhhoa';
 import type { SQL } from 'drizzle-orm';
 import { and, asc, desc, eq, gte, like, lte, or } from 'drizzle-orm';
 import { type MySqlSelect } from 'drizzle-orm/mysql-core';
+import moment from 'moment';
 import { db } from 'src/database/db';
 import { type User, users } from 'src/database/schemas/users.schema';
 import { SortEnum } from 'src/shared/enums';
@@ -102,8 +103,8 @@ export class UserService {
         nonce: 0,
         avatarUrl: null,
         isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: moment().toDate(),
+        updatedAt: moment().toDate(),
       };
     } catch (error) {
       throw error;
