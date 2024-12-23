@@ -3,12 +3,12 @@ import moment from 'moment';
 import { ContestTimeStatus } from '../enums';
 
 export const formatDate = (date: string | number): string => {
-  return moment(date).format('MMM D, YYYY, hh:mm A');
+  return moment.utc(date).local().format('MMM D, YYYY, hh:mm A');
 };
 
 export const getTimeRemaining = (targetDate: string | number): string => {
-  const now = moment();
-  const target = moment(targetDate);
+  const now = moment.utc();
+  const target = moment.utc(targetDate);
   const days = target.diff(now, 'days');
   return `${days} days`;
 };
@@ -17,9 +17,9 @@ export const getContestTimeStatus = (
   startTime: string | number,
   endTime: string | number,
 ): ContestTimeStatus => {
-  const now = moment();
-  const start = moment(startTime);
-  const end = moment(endTime);
+  const now = moment.utc();
+  const start = moment.utc(startTime);
+  const end = moment.utc(endTime);
 
   if (now.isBefore(start)) return ContestTimeStatus.UPCOMING;
   if (now.isAfter(end)) return ContestTimeStatus.ENDED;

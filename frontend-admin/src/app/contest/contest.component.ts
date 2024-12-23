@@ -202,7 +202,14 @@ export class ContestComponent implements OnInit {
 
     try {
       const accessToken = this.storeService.getTokens().accessToken;
-      const contestData: ICreateContest = this.createForm.value;
+      const formData = this.createForm.value;
+
+      // Convert local times to UTC
+      const contestData: ICreateContest = {
+        name: formData.name,
+        startTime: moment(formData.startTime).utc().format(),
+        endTime: moment(formData.endTime).utc().format(),
+      };
 
       await firstValueFrom(
         this.http.post<IResponse>(
