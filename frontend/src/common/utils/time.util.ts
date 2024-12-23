@@ -1,20 +1,15 @@
+import moment from 'moment';
+
 import { ContestTimeStatus } from '../enums';
 
 export const formatDate = (date: string | number): string => {
-  return new Date(date).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return moment(date).format('MMM D, YYYY, hh:mm A');
 };
 
 export const getTimeRemaining = (targetDate: string | number): string => {
-  const now = new Date().getTime();
-  const target = new Date(targetDate).getTime();
-  const diff = target - now;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const now = moment();
+  const target = moment(targetDate);
+  const days = target.diff(now, 'days');
   return `${days} days`;
 };
 
@@ -22,12 +17,12 @@ export const getContestTimeStatus = (
   startTime: string | number,
   endTime: string | number,
 ): ContestTimeStatus => {
-  const now = new Date().getTime();
-  const start = new Date(startTime).getTime();
-  const end = new Date(endTime).getTime();
+  const now = moment();
+  const start = moment(startTime);
+  const end = moment(endTime);
 
-  if (now < start) return ContestTimeStatus.UPCOMING;
-  if (now > end) return ContestTimeStatus.ENDED;
+  if (now.isBefore(start)) return ContestTimeStatus.UPCOMING;
+  if (now.isAfter(end)) return ContestTimeStatus.ENDED;
   return ContestTimeStatus.ACTIVE;
 };
 

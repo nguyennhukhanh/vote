@@ -5,6 +5,7 @@ import type { OnInit } from '@angular/core';
 import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import moment from 'moment';
 import { firstValueFrom } from 'rxjs';
 
 import { ContestTimeStatus } from '../../common/enums';
@@ -163,9 +164,8 @@ export class CandidateComponent implements OnInit {
       }
 
       this.contestInfo = contest;
-      const now = Math.floor(Date.now() / 1000);
+      const now = moment().unix();
 
-      // Convert BigInt to number for comparison
       const startTime = Number(contest.startTime);
       const endTime = Number(contest.endTime);
 

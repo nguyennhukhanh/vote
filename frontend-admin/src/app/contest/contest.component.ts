@@ -7,6 +7,7 @@ import { FormBuilder } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import moment from 'moment';
 import { firstValueFrom } from 'rxjs';
 
 import { ContestTimeStatus } from '../../common/enums';
@@ -176,10 +177,9 @@ export class ContestComponent implements OnInit {
 
     if (!startStr || !endStr) return null;
 
-    // Convert to UTC time to compare
-    const start = new Date(startStr).getTime();
-    const end = new Date(endStr).getTime();
-    const now = new Date().getTime();
+    const start = moment(startStr).valueOf();
+    const end = moment(endStr).valueOf();
+    const now = moment().valueOf();
 
     if (start < now) {
       return { pastStartDate: true };
