@@ -154,7 +154,7 @@ export class CandidateService {
 
         if (!voteExist) throw new HttpException('Contest not found', 404);
 
-        if (moment(voteExist.startTime).isBefore(moment()))
+        if (moment(voteExist.startTime).isBefore(moment().utc()))
           throw new HttpException(
             'Cannot add candidates after voting has started',
             400,

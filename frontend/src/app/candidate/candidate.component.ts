@@ -131,14 +131,18 @@ export class CandidateComponent implements OnInit {
 
     try {
       const contest = await this.contractService.getContest(this.voteId);
+      console.log('Contest data:', contest); // Debug log
+
       if (!contest) {
         throw new Error('Contest not found');
       }
 
       this.contestInfo = contest;
-      const now = moment().unix();
+      const now = moment.utc().unix();
       const startTime = Number(contest.startTime);
       const endTime = Number(contest.endTime);
+
+      console.log('Time comparison:', { now, startTime, endTime }); // Debug log
 
       if (now < startTime) {
         this.contestStatus = ContestTimeStatus.UPCOMING;
@@ -147,6 +151,8 @@ export class CandidateComponent implements OnInit {
       } else {
         this.contestStatus = ContestTimeStatus.ACTIVE;
       }
+
+      console.log('Contest status:', this.contestStatus); // Debug log
     } catch (error) {
       console.error('Error loading contest info:', error);
       this.contractError =
@@ -158,9 +164,10 @@ export class CandidateComponent implements OnInit {
 
   canVote(): boolean {
     if (this.isLoadingContract || !this.contestInfo) return false;
-    const now = moment().unix();
+    const now = moment.utc().unix();
     const startTime = Number(this.contestInfo.startTime);
     const endTime = Number(this.contestInfo.endTime);
+
     return now >= startTime && now <= endTime;
   }
 

@@ -40,6 +40,7 @@ export class SessionService {
     const newSession = {
       userId,
       expiresAt: moment()
+        .utc()
         .add(Number(userAuthConfig.refreshTokenLifetime), 'seconds')
         .toDate(),
     };
@@ -70,7 +71,7 @@ export class SessionService {
       .where(
         sql`${userSessions.id} = ${sessionId} AND ${
           userSessions.expiresAt
-        } > ${moment().toDate()}`,
+        } > ${moment().utc().toDate()}`,
       )
       .innerJoin(users, eq(userSessions.userId, users.id))
       .limit(1);
@@ -131,6 +132,7 @@ export class SessionService {
     const newSession = {
       adminId,
       expiresAt: moment()
+        .utc()
         .add(Number(adminAuthConfig.refreshTokenLifetime), 'seconds')
         .toDate(),
     };
@@ -160,7 +162,7 @@ export class SessionService {
       .where(
         sql`${adminSessions.id} = ${sessionId} AND ${
           adminSessions.expiresAt
-        } > ${moment().toDate()}`,
+        } > ${moment().utc().toDate()}`,
       )
       .innerJoin(admins, eq(adminSessions.adminId, admins.id))
       .limit(1);

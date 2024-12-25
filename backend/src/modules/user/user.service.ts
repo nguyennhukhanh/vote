@@ -103,8 +103,8 @@ export class UserService {
         nonce: 0,
         avatarUrl: null,
         isActive: true,
-        createdAt: moment().toDate(),
-        updatedAt: moment().toDate(),
+        createdAt: moment().utc().toDate(),
+        updatedAt: moment().utc().toDate(),
       };
     } catch (error) {
       throw error;

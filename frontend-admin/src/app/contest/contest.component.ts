@@ -179,7 +179,7 @@ export class ContestComponent implements OnInit {
 
     const start = moment(startStr).valueOf();
     const end = moment(endStr).valueOf();
-    const now = moment().valueOf();
+    const now = moment().utc().valueOf();
 
     if (start < now) {
       return { pastStartDate: true };

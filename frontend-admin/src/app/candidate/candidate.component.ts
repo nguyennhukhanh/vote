@@ -164,7 +164,7 @@ export class CandidateComponent implements OnInit {
       }
 
       this.contestInfo = contest;
-      const now = moment().unix();
+      const now = moment().utc().unix();
 
       const startTime = Number(contest.startTime);
       const endTime = Number(contest.endTime);
