@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
+import { toast } from 'ngx-sonner';
 
 import { MultiContestVotingAbi } from '../../common/constants/presidential_election_abi.const';
 import { environment } from '../../environments/environment.development';
@@ -8,11 +9,15 @@ import { environment } from '../../environments/environment.development';
   providedIn: 'root',
 })
 export class ContractService {
-  private _provider: ethers.BrowserProvider;
+  private _provider: ethers.BrowserProvider | undefined;
   private _contract: ethers.Contract | any;
 
   constructor() {
     const { ethereum } = <any>window;
+    if (!ethereum) {
+      toast.error('Please install MetaMask');
+      return;
+    }
     this._provider = new ethers.BrowserProvider(ethereum);
 
     this.init()
@@ -26,6 +31,9 @@ export class ContractService {
 
   async init() {
     try {
+      if (!this._provider) {
+        throw new Error('Provider is not initialized');
+      }
       const signer = await this._provider.getSigner();
       this._contract = new ethers.Contract(
         environment.contractAddress,

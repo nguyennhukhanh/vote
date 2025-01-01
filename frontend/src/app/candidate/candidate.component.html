@@ -1,20 +1,20 @@
 <app-navbar></app-navbar>
-<div class="min-h-screen container mx-auto px-4">
-  <div class="container mx-auto px-4 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen container mx-auto px-2 sm:px-4">
+  <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
       <!-- Header Section -->
-      <div class="mb-8 text-center">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">
+      <div class="mb-4 sm:mb-8 text-center">
+        <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">
           Contest Candidates
         </h1>
-        <p class="text-lg text-gray-600">
+        <p class="text-base sm:text-lg text-gray-600">
           Choose your candidate wisely - your vote matters!
         </p>
       </div>
 
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
         <!-- Enhanced Search Bar -->
-        <div class="bg-white shadow-lg rounded-xl mb-8 p-4 sm:p-6">
+        <div class="bg-white shadow-lg rounded-xl mb-4 sm:mb-8 p-3 sm:p-6">
           <div class="relative flex flex-col sm:block">
             <input
               type="text"
@@ -59,7 +59,9 @@
         </div>
 
         <!-- Candidates Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8"
+        >
           <div
             *ngFor="let candidate of candidates.items"
             class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden hover:translate-y-[-4px]"
@@ -219,21 +221,21 @@
     <!-- Vote Modal -->
     <div
       *ngIf="showVoteModal"
-      class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+      class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm overflow-y-auto"
     >
       <div
-        class="bg-white rounded-xl w-full max-w-5xl shadow-2xl transform transition-all"
+        class="bg-white rounded-xl w-full max-w-5xl shadow-2xl transform transition-all my-4"
       >
         <!-- Modal Header -->
         <div
-          class="bg-gradient-to-r from-orange-400 to-red-400 p-8 rounded-t-xl text-white"
+          class="bg-gradient-to-r from-orange-400 to-red-400 p-4 sm:p-8 rounded-t-xl text-white"
         >
           <div class="flex justify-between items-start">
             <div>
-              <h3 class="text-3xl font-bold mb-2">
+              <h3 class="text-xl sm:text-3xl font-bold mb-2">
                 Vote for {{ selectedCandidate?.name }}
               </h3>
-              <p class="text-lg opacity-90">
+              <p class="text-base sm:text-lg opacity-90">
                 {{ contestInfo?.name || 'Contest' }}
               </p>
             </div>
@@ -259,21 +261,23 @@
         </div>
 
         <!-- Modal Content -->
-        <div class="p-8">
+        <div class="p-4 sm:p-8">
           <!-- Main Content Grid -->
-          <div class="grid grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
             <!-- Left Column -->
             <div>
               <!-- Candidate Info Card -->
-              <div class="bg-gray-50 rounded-xl p-6">
-                <div class="flex items-center space-x-4 mb-6">
+              <div class="bg-gray-50 rounded-xl p-4 sm:p-6">
+                <div
+                  class="flex items-center space-x-2 sm:space-x-4 mb-4 sm:mb-6"
+                >
                   <div
-                    class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl sm:text-4xl font-bold"
                   >
                     {{ selectedCandidate?.name.charAt(0).toUpperCase() }}
                   </div>
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-900">
+                    <h4 class="text-xl sm:text-2xl font-bold text-gray-900">
                       {{ selectedCandidate?.name }}
                     </h4>
                     <p class="text-gray-500">
@@ -283,7 +287,7 @@
                 </div>
 
                 <!-- Vote Stats -->
-                <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
                   <div class="bg-white rounded-lg p-4 text-center">
                     <div class="text-3xl font-bold text-blue-600">
                       {{ selectedCandidate?.totalVotes || 0 }}
@@ -334,7 +338,7 @@
             </div>
 
             <!-- Right Column - Voters List -->
-            <div class="bg-gray-50 rounded-xl p-6">
+            <div class="bg-gray-50 rounded-xl p-4 sm:p-6">
               <div class="flex items-center justify-between mb-6">
                 <h4 class="text-xl font-bold text-gray-900">Recent Voters</h4>
                 <span
@@ -345,7 +349,7 @@
               </div>
 
               <!-- Voters Content -->
-              <div class="h-[500px] overflow-y-auto pr-2">
+              <div class="h-[300px] sm:h-[500px] overflow-y-auto pr-2">
                 <!-- Loading State -->
                 <div *ngIf="isLoadingVoters" class="flex justify-center py-8">
                   <div
