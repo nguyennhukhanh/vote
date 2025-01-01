@@ -1,5 +1,5 @@
 import type { OnInit } from '@angular/core';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CountUp } from 'countup.js';
 
@@ -13,6 +13,8 @@ import { NavbarComponent } from '../navbar/navbar.component';
   styleUrls: ['./home.component.sass'],
 })
 export class HomeComponent implements OnInit {
+  @ViewChild('navbar') navbar!: NavbarComponent;
+
   totalContests: number = 0;
   activeContests: number = 0;
   totalVotes: number = 0;

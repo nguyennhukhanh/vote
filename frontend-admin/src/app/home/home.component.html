@@ -1,7 +1,10 @@
-<app-navbar></app-navbar>
+<app-navbar #navbar></app-navbar>
 
-<!-- Main Content with margin for sidebar -->
-<div class="ml-64">
-  <!-- Router outlet for nested routes -->
+<!-- Main Content với margin dynamic -->
+<div
+  [class.ml-0]="!navbar.isSidebarOpen"
+  [class.ml-64]="navbar.isSidebarOpen"
+  class="transition-all duration-300"
+>
   <router-outlet></router-outlet>
 </div>
