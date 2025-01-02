@@ -15,7 +15,6 @@ export class NavbarComponent {
   isMenuOpen = false;
   isProfileMenuOpen = false;
   userAvatar: string | null = null;
-  notifications = 2; // Mock data, should come from a service
 
   constructor(
     @Inject(Router) private router: Router,
