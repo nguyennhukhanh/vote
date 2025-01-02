@@ -1,8 +1,9 @@
 import { Logger } from '@thanhhoajs/logger';
 import TelegramBot from 'node-telegram-bot-api';
 import { botConfig } from 'src/configs/bot.config';
-import { TelegramEventEnum } from 'src/shared/enums';
+import { SortEnum, TelegramEventEnum } from 'src/shared/enums';
 
+import type { VoteService } from '../vote/vote.service';
 import type { GeminiService } from './gemini.service';
 
 const logger = Logger.get('TelegramBot');
@@ -14,10 +15,13 @@ export class TelegramService {
 
   private message = botConfig.telegramBotMessage;
 
-  constructor(private readonly geminiService: GeminiService) {
-    this._init();
+  constructor(
+    private readonly geminiService: GeminiService,
+    private readonly voteService: VoteService,
+  ) {
+    this.init();
   }
-  async _init(): Promise<void> {
+  async init(): Promise<void> {
     this.telegramBot.on(TelegramEventEnum.PollingError, (error) => {
       logger.error('Polling Error');
       logger.error(error);
@@ -90,8 +94,14 @@ export class TelegramService {
 
     const chatId = chat.id;
 
-    // Using Gemini Bot
-    const answer = await this.geminiService.ask(text);
+    const response = await this.voteService.getVotesWithPagination({
+      sort: SortEnum.DESC,
+      page: 1,
+      limit: 50,
+    });
+    const answer = await this.geminiService.ask(
+      text + '```' + JSON.stringify(response.items, this.replacer) + '```',
+    );
 
     try {
       await this.telegramBot.sendMessage(chatId, answer, {
@@ -109,4 +119,11 @@ export class TelegramService {
       }
     }
   };
+
+  private replacer(key: string, value: any) {
+    if (typeof value === 'bigint') {
+      return value.toString();
+    }
+    return value;
+  }
 }
