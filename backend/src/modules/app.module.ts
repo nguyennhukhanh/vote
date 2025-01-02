@@ -2,6 +2,7 @@ import type { ThanhHoa } from '@thanhhoajs/thanhhoa';
 
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
+import { BotModule } from './bot/bot.module';
 import { CandidateModule } from './candidate/candidate.module';
 import { ChatModule } from './chat/chat.module';
 import { ContestModule } from './contest/contest.module';
@@ -19,5 +20,6 @@ export class AppModule {
     new CandidateModule(app);
     new VoteModule(app);
     new ChatModule(app);
+    new BotModule();
   }
 }
