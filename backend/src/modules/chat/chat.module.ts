@@ -9,10 +9,8 @@ export class ChatModule {
     const chatService = new ChatService(geminiService, voteService);
     const chatController = new ChatController(chatService);
 
-    app.group('/chat', (app) => {
-      app.post('/ask', (context: IRequestContext) =>
-        chatController.ask(context),
-      );
-    });
+    app.post('/chat/ask', (context: IRequestContext) =>
+      chatController.ask(context),
+    );
   }
 }

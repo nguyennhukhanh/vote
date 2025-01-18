@@ -40,55 +40,51 @@ export class AuthModule {
     const userRefreshTokenGuard = new UserRefreshTokenGuard(jwtService);
     const adminRefreshTokenGuard = new AdminRefreshTokenGuard(jwtService);
 
-    app.group('/user', (app) => {
-      app.post('/auth/nonce', (context: IRequestContext) =>
-        userAuthController.getNonce(context),
-      );
+    app.post('/user/auth/nonce', (context: IRequestContext) =>
+      userAuthController.getNonce(context),
+    );
 
-      app.post('/auth/login/wallet', (context: IRequestContext) =>
-        userAuthController.loginWithWallet(context),
-      );
+    app.post('/user/auth/login/wallet', (context: IRequestContext) =>
+      userAuthController.loginWithWallet(context),
+    );
 
-      app.post('/auth/login/google', (context: IRequestContext) =>
-        userAuthController.loginWithGoogle(context),
-      );
+    app.post('/user/auth/login/google', (context: IRequestContext) =>
+      userAuthController.loginWithGoogle(context),
+    );
 
-      app.get(
-        '/auth/logout',
-        userRefreshTokenGuard.check,
-        (context: IRequestContext) => userAuthController.logout(context),
-      );
+    app.get(
+      '/user/auth/logout',
+      userRefreshTokenGuard.check,
+      (context: IRequestContext) => userAuthController.logout(context),
+    );
 
-      app.get(
-        '/auth/refresh-token',
-        userRefreshTokenGuard.check,
-        (context: IRequestContext) => userAuthController.refreshToken(context),
-      );
-    });
+    app.get(
+      '/user/auth/refresh-token',
+      userRefreshTokenGuard.check,
+      (context: IRequestContext) => userAuthController.refreshToken(context),
+    );
 
-    app.group('/admin', (app) => {
-      app.post('/auth/login', (context: IRequestContext) =>
-        adminAuthController.login(context),
-      );
+    app.post('/admin/auth/login', (context: IRequestContext) =>
+      adminAuthController.login(context),
+    );
 
-      app.post(
-        '/auth/register',
-        GUARD(RoleEnum.ADMIN),
-        ROLE_GUARD(RoleEnum.SUPER_ADMIN),
-        (context: IRequestContext) => adminAuthController.register(context),
-      );
+    app.post(
+      '/admin/auth/register',
+      GUARD(RoleEnum.ADMIN),
+      ROLE_GUARD(RoleEnum.SUPER_ADMIN),
+      (context: IRequestContext) => adminAuthController.register(context),
+    );
 
-      app.get(
-        '/auth/logout',
-        adminRefreshTokenGuard.check,
-        (context: IRequestContext) => adminAuthController.logout(context),
-      );
+    app.get(
+      '/admin/auth/logout',
+      adminRefreshTokenGuard.check,
+      (context: IRequestContext) => adminAuthController.logout(context),
+    );
 
-      app.get(
-        '/auth/refresh-token',
-        adminRefreshTokenGuard.check,
-        (context: IRequestContext) => adminAuthController.refreshToken(context),
-      );
-    });
+    app.get(
+      '/admin/auth/refresh-token',
+      adminRefreshTokenGuard.check,
+      (context: IRequestContext) => adminAuthController.refreshToken(context),
+    );
   }
 }

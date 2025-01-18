@@ -10,18 +10,19 @@ export class CandidateModule {
     const candidateService = new CandidateService();
     const candidateController = new CandidateController(candidateService);
 
-    app.group('/candidate', (app) => {
-      app.get('', (context: IRequestContext) =>
-        candidateController.getCandidatesWithPagination(context),
-      );
+    app.get('/candidate', (context: IRequestContext) =>
+      candidateController.getCandidatesWithPagination(context),
+    );
 
-      app.get('/:id', (context: IRequestContext) =>
-        candidateController.getCandidateById(context),
-      );
+    app.get('/candidate/:id', (context: IRequestContext) =>
+      candidateController.getCandidateById(context),
+    );
 
-      app.post('/:voteId', GUARD(RoleEnum.ADMIN), (context: IRequestContext) =>
+    app.post(
+      '/candidate/:voteId',
+      GUARD(RoleEnum.ADMIN),
+      (context: IRequestContext) =>
         candidateController.createCandidate(context),
-      );
-    });
+    );
   }
 }

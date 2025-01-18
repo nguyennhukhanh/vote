@@ -22,7 +22,7 @@ const prefix = '/api';
 
 runValidators();
 
-export function startServer() {
+export async function startServer() {
   const app = new ThanhHoa(prefix);
 
   new AppModule(app);
@@ -44,8 +44,11 @@ export function startServer() {
   app.use((context, next) =>
     applyMiddlewareIfNeeded(helmetMiddleware, context, next),
   );
+  app.use((context, next) =>
+    applyMiddlewareIfNeeded(cacheMiddleware, context, next),
+  );
   app.use(
-    rateLimiter({
+    await rateLimiter({
       windowMs: 300000, // 5 minutes
       maxRequests: 50, // 50 requests
       message: 'Too many requests, please try again later',
@@ -53,7 +56,6 @@ export function startServer() {
       skipSuccessfulRequests: false,
     }),
   );
-  app.use(cacheMiddleware());
   app.use(
     compression({
       level: 1,
